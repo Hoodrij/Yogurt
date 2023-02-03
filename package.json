@@ -1,7 +1,7 @@
 ﻿{
   "name": "yogurt",
   "displayName": "Yogurt",
-  "description": "🥛 Async Managed Component-Oriented framework for Unity",
+  "description": "Async Managed Component-Oriented framework for Unity",
   "unity": "2019.1",
   "version": "1.0.0",
   "keywords": [
@@ -16,7 +16,7 @@
     "url": "https://github.com/Hoodrij/Yogurt"
   },
   "author": {
-    "name": "Viacheslav Korzun",
+    "name": "Hoodrij",
     "email": "Hoodrij@gmail.com"
   }
 }
