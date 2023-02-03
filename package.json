@@ -3,7 +3,7 @@
   "displayName": "Yogurt",
   "description": "🥛 Async Managed Component-Oriented framework for Unity",
   "unity": "2019.1",
-  "version": "1",
+  "version": "1.0",
   "keywords": [
     "yogurt",
     "ecs",
