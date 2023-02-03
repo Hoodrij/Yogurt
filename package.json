@@ -1,0 +1,22 @@
+﻿{
+  "name": "yogurt",
+  "displayName": "Yogurt",
+  "description": "🥛 Async Managed Component-Oriented framework for Unity",
+  "unity": "2019.1",
+  "version": "1",
+  "keywords": [
+    "yogurt",
+    "ecs",
+    "entity-component architecture",
+    "managed",
+    "async"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hoodrij/Yogurt"
+  },
+  "author": {
+    "name": "Viacheslav Korzun",
+    "email": "Hoodrij@gmail.com"
+  }
+}
