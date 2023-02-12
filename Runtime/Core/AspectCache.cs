@@ -8,7 +8,7 @@ namespace Yogurt
     {
         private static Dictionary<Type, Mask> cache = new();
         
-        public static QueryOfAspect<TAspect> Get<TAspect>() where TAspect : struct, Aspect<TAspect>
+        public static QueryOfAspect<TAspect> Get<TAspect>() where TAspect : struct, IAspect
         {
             QueryOfAspect<TAspect> query = new QueryOfAspect<TAspect>();
             Type aspectType = typeof(TAspect);
@@ -34,7 +34,7 @@ namespace Yogurt
                     mask.Set(ComponentID.Of(componentType));
                 }
                     
-                if (componentType.GetInterface(nameof(Aspect)) != null)
+                if (componentType.GetInterface(nameof(IAspect)) != null)
                 {
                     mask |= GenerateMask(componentType);
                 }

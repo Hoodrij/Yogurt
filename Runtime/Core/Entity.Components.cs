@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Yogurt
+﻿namespace Yogurt
 {
     public unsafe partial struct Entity
     {

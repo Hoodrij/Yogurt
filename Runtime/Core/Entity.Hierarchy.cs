@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Yogurt
+﻿namespace Yogurt
 {
     public unsafe partial struct Entity : IUnmanaged<Entity>
     {

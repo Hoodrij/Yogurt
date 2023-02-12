@@ -17,12 +17,12 @@ namespace Yogurt
             return result;
         }
 
-        public static TAspect ToAspect<TAspect>(this Entity entity) where TAspect : struct, Aspect<TAspect>
+        public static TAspect ToAspect<TAspect>(this Entity entity) where TAspect : struct, IAspect
         {
             return new TAspect { Entity = entity };
         }
         
-        public static Entity FromAspect(this Entity entity, Aspect aspect)
+        public static Entity FromAspect(this Entity entity, IAspect aspect)
         {
             return aspect.Entity;
         }
