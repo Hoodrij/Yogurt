@@ -29,10 +29,10 @@ namespace Yogurt
 
         private static bool DebugCheckNull(this Entity entity)
         {
-#if UNITY_EDITOR && FLOWJOB_DEBUG
+#if UNITY_EDITOR && YOGURT_DEBUG
             if (entity == Entity.Null)
             {
-                Debug.LogError($"Entity is Null");
+                UnityEngine.Debug.LogError($"Entity is Null");
                 return true;
             }
 #endif
@@ -41,43 +41,43 @@ namespace Yogurt
 
         internal static void DebugCheckAlive(this Entity entity)
         {
-#if UNITY_EDITOR && FLOWJOB_DEBUG
+#if UNITY_EDITOR && YOGURT_DEBUG
             if (DebugCheckNull(entity)) return;
             if (!entity.Exist)
             {
-                Debug.LogError($"{entity} does not Exist");
+                UnityEngine.Debug.LogError($"{entity} does not Exist");
             }
 #endif
         }
 
         internal static unsafe void DebugNoComponent<T>(this Entity entity) where T : IComponent
         {
-#if UNITY_EDITOR && FLOWJOB_DEBUG
+#if UNITY_EDITOR && YOGURT_DEBUG
             bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID.Of<T>());
             if (!entityHasComponent)
             {
-                Debug.LogError($"{entity} does not have [{typeof(T).Name}]");
+                UnityEngine.Debug.LogError($"{entity} does not have [{typeof(T).Name}]");
             }
 #endif
         }
 
         internal static unsafe void DebugAlreadyHave<T>(this Entity entity) where T : IComponent
         {
-#if UNITY_EDITOR && FLOWJOB_DEBUG
+#if UNITY_EDITOR && YOGURT_DEBUG
             bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID.Of<T>());
             if (entityHasComponent)
             {
-                Debug.LogError($"{entity} already have [{typeof(T).Name}]");
+                UnityEngine.Debug.LogError($"{entity} already have [{typeof(T).Name}]");
             }
 #endif
         }
         
         internal static void DebugParentToSelf(this Entity entity, Entity parent)
         {
-#if UNITY_EDITOR && FLOWJOB_DEBUG
+#if UNITY_EDITOR && YOGURT_DEBUG
             if (entity == parent)
             {
-                Debug.LogError($"{entity} trying parent self");
+                UnityEngine.Debug.LogError($"{entity} trying parent self");
             }
 #endif
         }

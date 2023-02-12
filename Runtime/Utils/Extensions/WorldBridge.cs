@@ -18,6 +18,7 @@ namespace Yogurt
 
         public static ref HashSet<Entity> GetEntities()
         {
+            UpdateWorld();
             return ref World.Entities;
         }
 

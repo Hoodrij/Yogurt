@@ -25,6 +25,8 @@
         public static void Set<TComponent>(this Aspect aspect, TComponent component) where TComponent : IComponent => aspect.Entity.Set(component);
         public static bool Has<TComponent>(this Aspect aspect) where TComponent : IComponent => aspect.Entity.Has<TComponent>();
         public static void Remove<TComponent>(this Aspect aspect) where TComponent : IComponent => aspect.Entity.Remove<TComponent>();
+
+        public static void Kill(this Aspect aspect) => aspect.Entity.Kill();
         
         public static string Name(this Aspect aspect)
         {
