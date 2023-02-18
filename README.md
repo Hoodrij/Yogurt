@@ -39,7 +39,7 @@ Components are classes that contain data.
 ```csharp
 public class Health : IComponent
 {
-		public int Value;
+    public int Value;
 }
 ```
 
@@ -69,8 +69,8 @@ public struct PlayerAspect : Aspect<PlayerAspect>
     public PlayerTag Tag => this.Get<PlayerTag>();
     public Health Health => this.Get<Health>();
     public Transform Transform => this.Get<Transform>();
-		
-		public OtherAspect OtherAspect => this.GetAspect<OtherAspect>();
+        
+    public OtherAspect OtherAspect => this.GetAspect<OtherAspect>();
 }
 
 PlayerAspect playerAspect = entity.ToAspect<PlayerAspect>();
@@ -88,8 +88,8 @@ Query is used to get required Entities.
     ```csharp
     // Query of an Entity
     var query = Query.Of<Health>()
-                    .With<PlayerTag>()
-                    .Without<DeadTag>();
+                     .With<PlayerTag>()
+                     .Without<DeadTag>();
     
     // Or Query of an Aspect
     var query = Query.Of<PlayerAspect>();
