@@ -1,5 +1,3 @@
-# Readme
-
 # 🥛 Yogurt
 
 **Async Managed Entity-Component Framework for Unity**
