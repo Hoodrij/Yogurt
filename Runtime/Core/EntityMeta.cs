@@ -3,7 +3,7 @@
 namespace Yogurt
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct EntityMeta : IUnmanaged<EntityMeta>
+    internal struct EntityMeta : IUnmanaged<EntityMeta>
     {
         internal bool IsAlive;
         internal int Id;

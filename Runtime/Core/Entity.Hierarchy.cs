@@ -1,6 +1,6 @@
 ﻿namespace Yogurt
 {
-    public unsafe partial struct Entity : IUnmanaged<Entity>
+    public unsafe partial struct Entity
     {
         public void SetParent(Entity parentEntity)
         {
@@ -15,18 +15,12 @@
             UnParent(Meta);
         }
 
-        internal void UnParent(EntityMeta* meta)
+        private void UnParent(EntityMeta* meta)
         {
             if (meta->Parent == Null) return;
             
             meta->Parent.Meta->Childs.Remove(this);
             meta->Parent = Null;
         }
-
-        public void Initialize()
-        {
-            this = default;
-        }
-        public void Dispose() { }
     }
 }

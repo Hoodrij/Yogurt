@@ -6,7 +6,7 @@ namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
     [DebuggerTypeProxy(typeof(EntityDebugView))]
-    public unsafe partial struct Entity : IComparable<Entity>, IEquatable<Entity>
+    public unsafe partial struct Entity : IComparable<Entity>, IUnmanaged<Entity>
     {
         public static readonly Entity Null = default;
         
@@ -78,6 +78,12 @@ namespace Yogurt
         {
             return !(entity1 == entity2);
         }
+        
+        public void Initialize()
+        {
+            this = default;
+        }
+        public void Dispose() { }
 
         private string Name
         {

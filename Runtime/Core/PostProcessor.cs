@@ -31,6 +31,8 @@ namespace Yogurt
                 {
                     case Action.ComponentsChanged:
                         {
+                            if (!entity.Exist) continue;
+                            
                             Stack<Group> groups = Storage.All[operation.componentId].Groups;
                             foreach (Group group in groups)
                             {
