@@ -17,14 +17,9 @@ namespace Yogurt
             return result;
         }
 
-        public static TAspect ToAspect<TAspect>(this Entity entity) where TAspect : struct, IAspect
+        public static TAspect As<TAspect>(this Entity entity) where TAspect : struct, IAspect
         {
             return new TAspect { Entity = entity };
-        }
-        
-        public static Entity FromAspect(this Entity entity, IAspect aspect)
-        {
-            return aspect.Entity;
         }
 
         private static bool DebugCheckNull(this Entity entity)

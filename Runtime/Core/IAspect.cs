@@ -18,7 +18,7 @@
         public static bool Has<TComponent>(this IAspect aspect) where TComponent : IComponent => aspect.Entity.Has<TComponent>();
         public static void Remove<TComponent>(this IAspect aspect) where TComponent : IComponent => aspect.Entity.Remove<TComponent>();
         public static TAspect Get<TAspect>(this IAspect aspect, Void _ = default) where TAspect : struct, IAspect
-            => aspect.Entity.ToAspect<TAspect>();
+            => aspect.Entity.As<TAspect>();
 
         public static string Name(this IAspect aspect)
         {

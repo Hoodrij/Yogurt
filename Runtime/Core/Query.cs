@@ -30,7 +30,7 @@ namespace Yogurt
         
         public static TAspect Single<TAspect>(Void _ = default) where TAspect : struct, IAspect
         {
-            return Of<TAspect>().GetGroup().Single().ToAspect<TAspect>();
+            return Of<TAspect>().GetGroup().Single().As<TAspect>();
         }
     }
 
@@ -91,11 +91,11 @@ namespace Yogurt
         {
             foreach (Entity entity in GetGroup())
             {
-                yield return entity.ToAspect<TAspect>();
+                yield return entity.As<TAspect>();
             }
         }
         
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public TAspect Single() => GetGroup().Single().ToAspect<TAspect>();
+        public TAspect Single() => GetGroup().Single().As<TAspect>();
     }
 }
