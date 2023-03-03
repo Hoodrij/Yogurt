@@ -70,7 +70,7 @@ public struct PlayerAspect : Aspect<PlayerAspect>
     public Health Health => this.Get<Health>();
     public Transform Transform => this.Get<Transform>();
         
-    public OtherAspect OtherAspect => this.GetAspect<OtherAspect>();
+    public NestedAspect NestedAspect => this.Get<NestedAspect>();
 }
 
 PlayerAspect playerAspect = entity.ToAspect<PlayerAspect>();
