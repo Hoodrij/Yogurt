@@ -2,17 +2,19 @@
 {
     public unsafe partial struct Entity
     {
-        public void SetParent(Entity parentEntity)
+        public Entity SetParent(Entity parentEntity)
         {
             this.DebugParentToSelf(parentEntity);
             
             Meta->Parent = parentEntity;
             parentEntity.Meta->Childs.Add(this);
+            return this;
         }
 
-        public void UnParent()
+        public Entity UnParent()
         {
             UnParent(Meta);
+            return this;
         }
 
         private void UnParent(EntityMeta* meta)
