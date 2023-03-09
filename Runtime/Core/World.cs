@@ -16,7 +16,7 @@ namespace Yogurt
         {
             Storage.Initialize();
 
-#if UNITY_64
+#if UNITY_2019_1_OR_NEWER
             UnityEngine.Application.quitting += Dispose;
 #endif
         }
@@ -53,7 +53,7 @@ namespace Yogurt
         private void Dispose()
         {
             WorldBridge.World = null;
-#if UNITY_64
+#if UNITY_2019_1_OR_NEWER
             UnityEngine.Application.quitting -= Dispose;
 #endif
 
