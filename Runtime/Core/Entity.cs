@@ -17,6 +17,9 @@ namespace Yogurt
         {
             get
             {
+#if UNITY_2019_1_OR_NEWER
+                if (!UnityEngine.Application.isPlaying) return false;
+#endif
                 if (this == Null) return false;
                 EntityMeta* meta = Meta;
                 return meta->IsAlive && meta->Age == Age;
