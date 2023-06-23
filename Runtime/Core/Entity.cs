@@ -94,7 +94,7 @@ namespace Yogurt
             {
                 if (this == Null)
                     return "Entity.Null";
-                string components = string.Concat(this.GetComponents().Select(c => $"{c.GetType().Name} ").ToArray());
+                string components = string.Join(", ", this.GetComponents().Select(c => $"{c.GetType().Name}").ToArray());
                 return $"{(Meta->IsAlive ? "" : "[DEAD] ")}Entity_{ID} [{components}]";
             }
         }
