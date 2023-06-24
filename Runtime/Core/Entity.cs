@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Yogurt
 {
-    [DebuggerDisplay("{Name}")]
+    [DebuggerDisplay(nameof(Name))]
     [DebuggerTypeProxy(typeof(EntityDebugView))]
     public unsafe partial struct Entity : IComparable<Entity>, IUnmanaged<Entity>
     {

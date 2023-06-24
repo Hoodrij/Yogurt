@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Yogurt
 {
-    [DebuggerDisplay("{Name}")]
+    [DebuggerDisplay(nameof(Name))]
     public struct Mask : IComparable<Mask>, IEquatable<Mask>
     {
         public bool IsEmpty => value == Int256.Zero;
@@ -82,7 +82,7 @@ namespace Yogurt
         
         public override string ToString()
         {
-            return value.ToString();
+            return Name;
         }
         
         public int CompareTo(Mask other)
@@ -104,7 +104,7 @@ namespace Yogurt
         {
             get
             {
-                string components = string.Concat(GetBytes().Select(b => $"{((ComponentID)b).Name} "));
+                string components = string.Join(", ", GetBytes().Select(b => $"{((ComponentID)b).Name}"));
                 return components;
             }
         }

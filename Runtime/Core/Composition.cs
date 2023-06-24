@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Yogurt
 {
+    [DebuggerDisplay(nameof(Name))]
     public readonly struct Composition : IEquatable<Composition>
     {
         private readonly Mask included;
@@ -42,5 +44,12 @@ namespace Yogurt
         {
             return obj is Composition other && Equals(other);
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        private string Name => included.ToString();
     }
 }
