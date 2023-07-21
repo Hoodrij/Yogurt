@@ -348,7 +348,7 @@ namespace Yogurt
 
         public override int GetHashCode()
         {
-            return System.HashCode.Combine(u0, u1, u2, u3);;
+            return HashCode.Combine(u0, u1, u2, u3);;
         }
         
         public bool Equals(Int256 other)

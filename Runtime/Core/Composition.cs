@@ -9,13 +9,13 @@ namespace Yogurt
     {
         private readonly Mask included;
         private readonly Mask excluded;
-        internal readonly HashCode Hash;
+        internal readonly int Hash;
 
         public Composition(Mask included, Mask excluded) : this()
         {
             this.included = included;
             this.excluded = excluded;
-            Hash = HashCode.Of(included).And(excluded);
+            Hash = HashCode.Combine(included, excluded);
         }
         
         internal unsafe bool Fits(EntityMeta* meta)
@@ -37,8 +37,7 @@ namespace Yogurt
 
         public bool Equals(Composition other)
         {
-            return GetHashCode() == other.GetHashCode()
-                && included.Equals(other.included)
+            return included.Equals(other.included)
                 && excluded.Equals(other.excluded);
         }
 
