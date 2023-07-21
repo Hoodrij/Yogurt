@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Yogurt
 {
-    [DebuggerDisplay(nameof(Name))]
+    [DebuggerDisplay("{Name}")]
     public struct Mask : IComparable<Mask>, IEquatable<Mask>
     {
         public bool IsEmpty => value == Int256.Zero;
