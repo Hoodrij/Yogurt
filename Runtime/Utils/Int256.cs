@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Buffers.Binary;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -319,6 +321,16 @@ namespace Yogurt
         public static bool operator <=(in Int256 a, in Int256 b) => !LessThan(in b, in a);
         public static bool operator >(in Int256 a, in Int256 b) => LessThan(in b, in a);
         public static bool operator >=(in Int256 a, in Int256 b) => !LessThan(in a, in b);
+        
+        public static explicit operator BigInteger(in Int256 value)
+        {
+            Span<byte> bytes = stackalloc byte[32];
+            BinaryPrimitives.WriteUInt64LittleEndian(bytes.Slice(0, 8), value.u0);
+            BinaryPrimitives.WriteUInt64LittleEndian(bytes.Slice(8, 8), value.u1);
+            BinaryPrimitives.WriteUInt64LittleEndian(bytes.Slice(16, 8), value.u2);
+            BinaryPrimitives.WriteUInt64LittleEndian(bytes.Slice(24, 8), value.u3);
+            return new BigInteger(bytes, true);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool LessThan(in Int256 a, in Int256 b)
@@ -333,9 +345,12 @@ namespace Yogurt
         }
 
         public int CompareTo(Int256 b) => this < b ? -1 : Equals(b) ? 0 : 1;
-        
-        public override int GetHashCode() => System.HashCode.Combine(u0, u1, u2, u3);
 
+        public override int GetHashCode()
+        {
+            return System.HashCode.Combine(u0, u1, u2, u3);;
+        }
+        
         public bool Equals(Int256 other)
         {
             return u0 == other.u0 && u1 == other.u1 && u2 == other.u2 && u3 == other.u3;
@@ -343,6 +358,11 @@ namespace Yogurt
         public bool Equals(uint other)
         {
             return u0 == other && u1 == 0 && u2 == 0 && u3 == 0;
+        }
+
+        public override string ToString()
+        {
+            return ((BigInteger)this).ToString();
         }
 
         public override bool Equals(object obj)
