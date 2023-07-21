@@ -6,14 +6,14 @@ namespace Yogurt
 {
     internal class Group : IEquatable<Group>, IComparable<Group>
     {
-        internal static Dictionary<HashCode, Group> Cache = new();
+        internal static Dictionary<Composition, Group> Cache = new();
 
         private HashSet<Entity> entities = new(Consts.INITIAL_ENTITIES_COUNT);
         private readonly Composition composition;
 
         public static Group GetGroup(Composition composition)
         {
-            if (Cache.TryGetValue(composition.Hash, out Group group))
+            if (Cache.TryGetValue(composition, out Group group))
             {
                 return group;
             }
@@ -24,7 +24,7 @@ namespace Yogurt
         private Group(Composition composition)
         {
             this.composition = composition;
-            Cache.Add(composition.Hash, this);
+            Cache.Add(composition, this);
 
             foreach (ComponentID componentID in composition.GetIds())
             {
@@ -62,14 +62,14 @@ namespace Yogurt
             {
                 if (TryAdd(entity))
                 {
-                    meta->Groups.Add(this);
+                    meta->Groups.Add(composition);
                 }
             }
             else
             {
                 if (TryRemove(entity))
                 {
-                    meta->Groups.Remove(this);
+                    meta->Groups.Remove(composition);
                 }
             }
         }
@@ -120,24 +120,6 @@ namespace Yogurt
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
             return GetHashCode().CompareTo(other.GetHashCode());
-        }
-    }
-    
-    internal struct GroupId : IUnmanaged<GroupId>
-    {
-        public int Id;
-            
-        public void Initialize() { }
-        public void Dispose() { }
-
-        public bool Equals(GroupId other)
-        {
-            return Id == other.Id;
-        }
-        
-        public static implicit operator GroupId(Group group)
-        {
-            return new GroupId { Id = group.GetHashCode() };
         }
     }
 }

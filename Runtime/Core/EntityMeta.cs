@@ -10,7 +10,7 @@ namespace Yogurt
         internal int Age;
         internal Mask ComponentsMask;
 
-        internal UnsafeSpan<GroupId> Groups;
+        internal UnsafeSpan<Composition> Groups;
         
         internal UnsafeSpan<Entity> Childs;
         internal Entity Parent;

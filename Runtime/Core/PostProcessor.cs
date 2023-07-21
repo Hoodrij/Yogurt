@@ -1,10 +1,21 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Yogurt
 {
     internal class PostProcessor
     {
+        private struct EntityOperation
+        {
+            public Entity entity;
+            public ComponentID componentId;
+            public Action action;
+        }
+        internal enum Action : byte
+        {
+            ComponentsChanged,
+            Kill,
+        }
+        
         private Queue<EntityOperation> operations = new();
 
         internal void Enqueue(Action action, Entity entity, ComponentID componentId = default)
@@ -44,7 +55,7 @@ namespace Yogurt
                         {
                             for (int i = 0; i < meta->Groups.Count; i++)
                             {
-                                Group.Cache.TryGetValue(meta->Groups[i]->Id, out Group group);
+                                Group.Cache.TryGetValue(*meta->Groups[i], out Group group);
                                 group?.TryRemove(entity);
                             }
 
@@ -56,20 +67,6 @@ namespace Yogurt
                         break;
                 }
             }
-        }
-        
-        [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Unicode)]
-        private struct EntityOperation
-        {
-            public Entity entity;
-            public ComponentID componentId;
-            public Action action;
-        }
-
-        internal enum Action : byte
-        {
-            ComponentsChanged,
-            Kill,
         }
     }
 }

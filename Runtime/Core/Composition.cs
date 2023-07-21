@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
-    public readonly struct Composition : IEquatable<Composition>
+    public readonly struct Composition : IEquatable<Composition>, IUnmanaged<Composition>
     {
         private readonly Mask included;
         private readonly Mask excluded;
@@ -15,7 +15,7 @@ namespace Yogurt
         {
             this.included = included;
             this.excluded = excluded;
-            Hash = HashCode.Of(included).And(17).And(31).And(excluded);
+            Hash = HashCode.Of(included).And(excluded);
         }
         
         internal unsafe bool Fits(EntityMeta* meta)
@@ -37,9 +37,14 @@ namespace Yogurt
 
         public bool Equals(Composition other)
         {
-            return GetHashCode() == other.GetHashCode();
+            return GetHashCode() == other.GetHashCode()
+                && included.Equals(other.included)
+                && excluded.Equals(other.excluded);
         }
-        
+
+        public void Initialize() { }
+        public void Dispose() { }
+
         public override bool Equals(object obj)
         {
             return obj is Composition other && Equals(other);
@@ -49,6 +54,7 @@ namespace Yogurt
         {
             return Name;
         }
+
 
         private string Name => included.ToString();
     }
