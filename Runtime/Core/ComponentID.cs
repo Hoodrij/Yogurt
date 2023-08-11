@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
-    public readonly struct ComponentID
+    internal readonly struct ComponentID
     {
         private static Dictionary<Type, ComponentID> ComponentsIds = new();
 

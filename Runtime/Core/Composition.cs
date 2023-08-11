@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
-    public readonly struct Composition : IEquatable<Composition>, IUnmanaged<Composition>
+    internal readonly struct Composition : IEquatable<Composition>, IUnmanaged<Composition>
     {
         private readonly Mask included;
         private readonly Mask excluded;

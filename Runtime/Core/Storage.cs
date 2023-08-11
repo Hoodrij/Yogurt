@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Yogurt
 {
-    public abstract class Storage
+    internal abstract class Storage
     {
         internal static Storage[] All;
 
@@ -29,7 +29,7 @@ namespace Yogurt
         }
     }
 
-    public class Storage<T> : Storage where T : IComponent
+    internal class Storage<T> : Storage where T : IComponent
     {
         internal static Storage<T> Instance;
 
@@ -43,7 +43,7 @@ namespace Yogurt
             All[id] = this;
         }
 
-        public void Set(T component, int index)
+        internal void Set(T component, int index)
         {
             if (index >= Components.Length)
             {
@@ -53,7 +53,7 @@ namespace Yogurt
             Components[index] = component;
         }
 
-        public ref T Get(int index)
+        internal ref T Get(int index)
         {
             return ref Components[index];
         }
