@@ -68,7 +68,9 @@ namespace Yogurt
 
         public void Kill()
         {
-            this.DebugCheckAlive();
+            if (!Exist)
+                return;
+
             WorldBridge.Enqueue(PostProcessor.Action.Kill, this);
             
             EntityMeta* meta = Meta;
