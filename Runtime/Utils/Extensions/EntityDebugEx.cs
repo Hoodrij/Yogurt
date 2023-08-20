@@ -10,7 +10,7 @@ namespace Yogurt
             EntityMeta* meta = entity.Meta;
             foreach (ComponentID componentId in meta->ComponentsMask.GetBytes())
             {
-                Storage storage = Storage.All[componentId];
+                Storage storage = Storage.Of(componentId);
                 result.Add(storage.ComponentsArray[entity]);
             }
 

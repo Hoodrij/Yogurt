@@ -18,18 +18,18 @@ namespace Yogurt
         
         public static ComponentID Of(Type type)
         {
-            if (ComponentsIds.TryGetValue(type, out ComponentID componentType))
+            if (ComponentsIds.TryGetValue(type, out ComponentID componentId))
             {
-                return componentType;
+                return componentId;
             }
 
-            componentType = new ComponentID((byte)(ComponentsIds.Values.Count));
-            ComponentsIds.Add(type, componentType);
-            return componentType;
+            componentId = new ComponentID((byte)ComponentsIds.Values.Count);
+            ComponentsIds.Add(type, componentId);
+            return componentId;
         }
         
         public static ComponentID Of<T>() where T : IComponent => Of(typeof(T));
-
+        
         public static implicit operator byte(ComponentID id)
         {
             return id.ID;

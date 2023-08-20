@@ -7,12 +7,12 @@ namespace Yogurt
 {
     internal abstract class Storage
     {
-        internal static Storage[] All;
+        protected static Storage[] All;
 
-        internal Stack<Group> Groups = new();
-        internal abstract IComponent[] ComponentsArray { get; }
+        public Stack<Group> Groups = new();
+        public abstract IComponent[] ComponentsArray { get; }
 
-        internal static void Initialize()
+        public static void Initialize()
         {
             All = new Storage[Consts.INITIAL_COMPONENTS_COUNT];
             
@@ -20,42 +20,51 @@ namespace Yogurt
             {
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (!type.GetInterfaces().Contains(typeof(IComponent))
-                        || type.IsGenericType) continue;
+                    if (!type.GetInterfaces().Contains(typeof(IComponent)) || type.IsGenericType) 
+                        continue;
                     Type genericStorage = typeof(Storage<>).MakeGenericType(type);
                     Activator.CreateInstance(genericStorage);
                 }
             }
         }
+
+        public abstract void Set(IComponent component, Entity entity);
+
+        public static Storage Of(ComponentID componentId)
+        {
+            return All[componentId];
+        }
+        
+        public static Storage<T> Of<T>() where T : IComponent
+        {
+            return (Storage<T>) Of(ComponentID.Of<T>());
+        }
     }
 
     internal class Storage<T> : Storage where T : IComponent
     {
-        internal static Storage<T> Instance;
-
-        private T[] Components = new T[Consts.INITIAL_ENTITIES_COUNT / 2];
-        internal override IComponent[] ComponentsArray => Components as IComponent[];
-
+        private T[] components = new T[Consts.INITIAL_ENTITIES_COUNT / 2];
+        public override IComponent[] ComponentsArray => components as IComponent[];
+        
         public Storage()
         {
-            Instance = this;
             ComponentID id = ComponentID.Of<T>();
             All[id] = this;
         }
 
-        internal void Set(T component, int index)
+        public override void Set(IComponent component, Entity entity)
         {
-            if (index >= Components.Length)
+            if (entity >= components.Length)
             {
-                Array.Resize(ref Components, index + index / 2);
+                Array.Resize(ref components, entity + entity / 2);
             }
             
-            Components[index] = component;
+            components[entity] = (T) component;
         }
 
-        internal ref T Get(int index)
+        public ref T Get(Entity entity)
         {
-            return ref Components[index];
+            return ref components[entity];
         }
     }
 }

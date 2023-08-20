@@ -1,35 +1,27 @@
-﻿namespace Yogurt
+﻿using System;
+
+namespace Yogurt
 {
     public unsafe partial struct Entity
     {
         internal EntityMeta* Meta => WorldBridge.GetMeta(ID);
-
-        public Entity Add<T>() where T : IComponent, new()
-        {
-            Add(new T());
-            return this;
-        }
         
         public Entity Add<T>(T component) where T : IComponent
         {
-            this.DebugCheckAlive();
             this.DebugAlreadyHave<T>();
             
-            Set(component, false);
+            Set(component);
             return this;
         }
 
-        public Entity Set<T>(T component, bool shouldRewrite = true) where T : IComponent
+        public Entity Set<T>(T component) where T : IComponent
         {
             this.DebugCheckAlive();
             
-            if (shouldRewrite && Has<T>())
-                Remove<T>();
-            
-            ComponentID componentID = ComponentID.Of<T>();
+            ComponentID componentID = ComponentID.Of(component.GetType());
             Meta->ComponentsMask.Set(componentID);
+            Storage.Of(componentID).Set(component, this);
             WorldBridge.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
-            Storage<T>.Instance.Set(component, ID);
 
             return this;
         }
@@ -39,7 +31,7 @@
             this.DebugCheckAlive();
             this.DebugNoComponent<T>();
 
-            return ref Storage<T>.Instance.Get(ID);
+            return ref Storage.Of<T>().Get(this);
         }
         
         public bool TryGet<T>(out T t) where T : IComponent
@@ -48,7 +40,7 @@
             t = default;
             if (has)
             {
-                t = Storage<T>.Instance.Get(ID);
+                t = Storage.Of<T>().Get(this);
             }
 
             return has;

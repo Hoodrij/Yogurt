@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -44,7 +45,7 @@ namespace Yogurt
                         {
                             if (!entity.Exist) continue;
                             
-                            Stack<Group> groups = Storage.All[operation.componentId].Groups;
+                            Stack<Group> groups = Storage.Of(operation.componentId).Groups;
                             foreach (Group group in groups)
                             {
                                 group.ProcessEntity(entity, meta);

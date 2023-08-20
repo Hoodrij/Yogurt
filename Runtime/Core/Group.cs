@@ -28,7 +28,7 @@ namespace Yogurt
 
             foreach (ComponentID componentID in composition.GetIds())
             {
-                Storage.All[componentID].Groups.Push(this);
+                Storage.Of(componentID).Groups.Push(this);
             }
             
             foreach (Entity entity in WorldBridge.GetEntities())
