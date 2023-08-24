@@ -44,11 +44,9 @@ public class Health : IComponent
 Entity has a bunch of methods to operate with components.
 
 ```csharp
-entity.Add<Health>();
 entity.Add(new Health());
-
-entity.Has<Health>();
 entity.Set(new Health());
+entity.Has<Health>();
 entity.Remove<Health>();
 
 entity.Get<Health>();
@@ -60,7 +58,7 @@ entity.TryGet(out Health health);
 Aspect is an Entity with a defined set of Components. Used to speed up the interaction with Entity.
 
 ```csharp
-public struct PlayerAspect : Aspect<PlayerAspect>
+public struct PlayerAspect : IAspect
 {
     public Entity Entity { get; set; }
     
@@ -71,9 +69,10 @@ public struct PlayerAspect : Aspect<PlayerAspect>
     public NestedAspect NestedAspect => this.Get<NestedAspect>();
 }
 
-PlayerAspect playerAspect = entity.ToAspect<PlayerAspect>();
+PlayerAspect playerAspect = entity.As<PlayerAspect>();
 playerAspect.Health.Value -= 1;
-playerAspect.Add<OtherComponent>();
+playerAspect.Add(new OtherComponent());
+playerAspect.Exist();
 playerAspect.Kill();
 ```
 
