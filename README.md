@@ -143,6 +143,6 @@ To enable debug logging add YOGURT_DEBUG to your [Scripting Define Symbols](http
 
 # Examples
 
-- **Roguelike** sample project
+- ⚔️ **Roguelike** sample project
 
 [https://github.com/Hoodrij/Yogurt-Roguelike](https://github.com/Hoodrij/Yogurt-Roguelike)
