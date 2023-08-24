@@ -11,6 +11,11 @@ Someday there will be a fight between ECS and Yogurt approach 🙌
 2. Click ➕ button → “*Add package from git URL…*”
 3. Enter **https://github.com/Hoodrij/Yogurt.git**
 
+# Examples
+
+- ⚔️ **Roguelike** sample project
+
+    [https://github.com/Hoodrij/Yogurt-Roguelike](https://github.com/Hoodrij/Yogurt-Roguelike)
 
 # Overview
 
@@ -139,10 +144,3 @@ new Yogurt.Debug().Entities;
 You can Execute this at debug mode right inside of you IDE.
 
 To enable debug logging add YOGURT_DEBUG to your [Scripting Define Symbols](https://docs.unity3d.com/Manual/CustomScriptingSymbols.html)
-
-
-# Examples
-
-- ⚔️ **Roguelike** sample project
-
-[https://github.com/Hoodrij/Yogurt-Roguelike](https://github.com/Hoodrij/Yogurt-Roguelike)
