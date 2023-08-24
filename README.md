@@ -8,7 +8,7 @@ Someday there will be a fight between ECS and Yogurt approach 🙌
 # Installation
 
 1. Open **Unity Package Manager**
-2. Click *➕* button → “*Add package from git URL…*”
+2. Click ➕ button → “*Add package from git URL…*”
 3. Enter **https://github.com/Hoodrij/Yogurt.git**
 
 
