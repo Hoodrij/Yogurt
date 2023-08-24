@@ -69,11 +69,11 @@ public struct PlayerAspect : IAspect
     public NestedAspect NestedAspect => this.Get<NestedAspect>();
 }
 
-PlayerAspect playerAspect = entity.As<PlayerAspect>();
-playerAspect.Health.Value -= 1;
-playerAspect.Add(new OtherComponent());
-playerAspect.Exist();
-playerAspect.Kill();
+PlayerAspect player = anyEntity.As<PlayerAspect>();
+player.Health.Value -= 1;
+player.Add(new OtherComponent());
+player.Exist();
+player.Kill();
 ```
 
 ### 🏷️ Query
