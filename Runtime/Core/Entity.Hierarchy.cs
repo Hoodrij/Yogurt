@@ -5,8 +5,15 @@
         public Entity SetParent(Entity parentEntity)
         {
             this.DebugParentToSelf(parentEntity);
+
+            EntityMeta* meta = Meta;
             
-            Meta->Parent = parentEntity;
+            if (meta->Parent.Exist)
+            {
+                UnParent();
+            }
+            
+            meta->Parent = parentEntity;
             parentEntity.Meta->Childs.Add(this);
             return this;
         }
