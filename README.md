@@ -13,9 +13,11 @@ Someday there will be a fight between ECS and Yogurt approach 🙌
 
 # Examples
 
-- ⚔️ **Roguelike** sample project
-
+- ⚔️ **Roguelike** sample project                                                      
     [https://github.com/Hoodrij/Yogurt-Roguelike](https://github.com/Hoodrij/Yogurt-Roguelike)
+    
+- 💣 **Arena** more complex sample project                                           
+    [https://github.com/Hoodrij/Yogurt-Arena](https://github.com/Hoodrij/Yogurt-Arena)
 
 # Overview
 
