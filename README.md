@@ -2,8 +2,6 @@
 
 **Async Managed Entity-Component Framework for Unity**
 
-Someday there will be a fight between ECS and Yogurt approach 🙌
-
 
 # Installation
 
