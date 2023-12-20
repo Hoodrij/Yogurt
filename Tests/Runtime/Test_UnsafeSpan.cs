@@ -2,10 +2,10 @@
 
 namespace Yogurt.Tests
 {
-    public class TestUnsafeSpan
+    internal class Test_UnsafeSpan
     {
         [Test]
-        public unsafe void Test_Add()
+        public unsafe void Add()
         {
             UnsafeSpan<Entity> span = new UnsafeSpan<Entity>();
             span.Initialize(4);

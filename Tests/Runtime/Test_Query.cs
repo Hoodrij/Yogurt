@@ -3,10 +3,10 @@ using NUnit.Framework;
 
 namespace Yogurt.Tests
 {
-    public class TestQuery
+    internal class Test_Query
     {
         [Test]
-        public void Test_Query()
+        public void Basic()
         {
             int count = 100;
             for (int i = 0; i < count; i++)
