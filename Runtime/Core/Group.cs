@@ -56,7 +56,7 @@ namespace Yogurt
             return Entity.Null;
         }
 
-        internal unsafe void ProcessEntity(in Entity entity, EntityMeta* meta)
+        internal unsafe void ProcessEntity(Entity entity, EntityMeta* meta)
         {
             if (composition.Fits(meta))
             {
