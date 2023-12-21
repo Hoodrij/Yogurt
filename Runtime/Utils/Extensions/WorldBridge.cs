@@ -16,10 +16,10 @@ namespace Yogurt
             World.PostProcessor.Update();
         }
 
-        public static ref HashSet<Entity> GetEntities()
+        public static HashSet<Entity> GetEntities()
         {
             UpdateWorld();
-            return ref World.Entities;
+            return World.Entities;
         }
 
         public static unsafe EntityMeta* GetMeta(Entity entity)
