@@ -60,10 +60,10 @@ namespace Yogurt
                                 group?.TryRemove(entity);
                             }
 
+                            WorldBridge.RemoveEntity(entity);
                             meta->Clear();
                             entity.Age += 1;
                             entity.Age %= int.MaxValue;
-                            WorldBridge.RemoveEntity(entity);
                         }
                         break;
                 }
