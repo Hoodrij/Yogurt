@@ -4,6 +4,8 @@ namespace Yogurt.Tests
 {
     internal class Test_Entity
     {
+        [OneTimeTearDown] public void TearDown() => WorldBridge.World?.Dispose();
+        
         [Test]
         public void Creation()
         {

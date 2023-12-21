@@ -50,7 +50,7 @@ namespace Yogurt
             return entity;
         }
 
-        private void Dispose()
+        public void Dispose()
         {
             WorldBridge.World = null;
 #if UNITY_2019_1_OR_NEWER

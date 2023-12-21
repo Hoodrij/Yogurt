@@ -4,6 +4,8 @@ namespace Yogurt.Tests
 {
     internal class Test_UnsafeSpan
     {
+        [OneTimeTearDown] public void TearDown() => WorldBridge.World?.Dispose();
+        
         [Test]
         public unsafe void Add()
         {

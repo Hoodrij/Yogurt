@@ -5,6 +5,8 @@ namespace Yogurt.Tests
 {
     internal class Test_Entity_Components
     {
+        [OneTimeTearDown] public void TearDown() => WorldBridge.World?.Dispose();
+        
         [Test]
         public void HasComponent()
         {
