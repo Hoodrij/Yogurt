@@ -29,6 +29,8 @@ namespace Yogurt
             if (world.ReleasedEntities.Count > 0)
             {
                 entity = world.ReleasedEntities.Dequeue();
+                entity.Age += 1;
+                entity.Age %= int.MaxValue;
             }
             else
             {
