@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Yogurt
+﻿namespace Yogurt
 {
     public unsafe partial struct Entity
     {

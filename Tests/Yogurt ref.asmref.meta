@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Tests/Yogurt reference.asmref.meta
+guid: 738ca3c8887c3f84a94930cf8c6bbf02
+========
 guid: 94b5939a1d6a0bb40b4b7cfe3b548885
+>>>>>>>> main:Tests/Yogurt asmdef ref.asmref.meta
 AssemblyDefinitionReferenceImporter:
   externalObjects: {}
   userData: 

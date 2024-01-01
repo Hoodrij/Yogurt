@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -7,9 +6,9 @@ namespace Yogurt
     {
         private struct EntityOperation
         {
-            public Entity entity;
-            public ComponentID componentId;
-            public Action action;
+            public Entity Entity;
+            public ComponentID ComponentId;
+            public Action Action;
         }
         internal enum Action : byte
         {
@@ -23,9 +22,9 @@ namespace Yogurt
         {
             operations.Enqueue(new EntityOperation
             {
-                entity = entity,
-                componentId = componentId,
-                action = action
+                Entity = entity,
+                ComponentId = componentId,
+                Action = action
             });
         }
 
@@ -36,16 +35,17 @@ namespace Yogurt
             while (operations.Count > 0)
             {
                 EntityOperation operation = operations.Dequeue();
-                Entity entity = operation.entity;
-                EntityMeta* meta = entity.Meta;
+                Entity entity = operation.Entity;
                 
-                switch (operation.action)
+                switch (operation.Action)
                 {
                     case Action.ComponentsChanged:
                         {
                             if (!entity.Exist) continue;
                             
-                            Stack<Group> groups = Storage.Of(operation.componentId).Groups;
+                            EntityMeta* meta = entity.Meta;
+                            
+                            Stack<Group> groups = Storage.Of(operation.ComponentId).Groups;
                             foreach (Group group in groups)
                             {
                                 group.ProcessEntity(entity, meta);
@@ -54,6 +54,8 @@ namespace Yogurt
                         break;
                     case Action.Kill:
                         {
+                            EntityMeta* meta = entity.Meta;
+                            
                             for (int i = 0; i < meta->Groups.Count; i++)
                             {
                                 Group.Cache.TryGetValue(*meta->Groups[i], out Group group);

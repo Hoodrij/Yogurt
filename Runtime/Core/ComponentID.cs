@@ -7,7 +7,7 @@ namespace Yogurt
     [DebuggerDisplay("{Name}")]
     internal readonly struct ComponentID
     {
-        private static Dictionary<Type, ComponentID> ComponentsIds = new();
+        private static Dictionary<Type, ComponentID> componentsIds = new(Consts.INITIAL_COMPONENTS_COUNT);
 
         private readonly byte ID;
 
@@ -18,13 +18,13 @@ namespace Yogurt
         
         public static ComponentID Of(Type type)
         {
-            if (ComponentsIds.TryGetValue(type, out ComponentID componentId))
+            if (componentsIds.TryGetValue(type, out ComponentID componentId))
             {
                 return componentId;
             }
 
-            componentId = new ComponentID((byte)ComponentsIds.Values.Count);
-            ComponentsIds.Add(type, componentId);
+            componentId = new ComponentID((byte)componentsIds.Values.Count);
+            componentsIds.Add(type, componentId);
             return componentId;
         }
         
@@ -44,7 +44,7 @@ namespace Yogurt
         {
             get
             {
-                foreach ((Type key, ComponentID value) in ComponentsIds)
+                foreach ((Type key, ComponentID value) in componentsIds)
                 {
                     if (value == ID) return key.Name;
                 }
