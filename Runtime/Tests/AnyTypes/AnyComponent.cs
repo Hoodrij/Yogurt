@@ -1,6 +1,6 @@
 ﻿namespace Yogurt.Tests
 {
-    public class AnyComponent : IComponent
+    internal class AnyComponent : IComponent
     {
         public int i;
     }
