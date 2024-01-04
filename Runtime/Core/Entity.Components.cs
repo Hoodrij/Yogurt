@@ -2,7 +2,7 @@
 {
     public unsafe partial struct Entity
     {
-        internal EntityMeta* Meta => WorldBridge.GetMeta(ID);
+        internal EntityMeta* Meta => WorldFacade.GetMeta(ID);
         
         public Entity Add<T>(T component) where T : IComponent
         {
@@ -19,7 +19,7 @@
             ComponentID componentID = ComponentID.Of(component.GetType());
             Meta->ComponentsMask.Set(componentID);
             Storage.Of(componentID).Set(component, this);
-            WorldBridge.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
+            WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
 
             return this;
         }
@@ -61,7 +61,7 @@
             if (Meta->ComponentsMask.IsEmpty)
                 Kill();
             else
-                WorldBridge.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
+                WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
         }
 
         public void Kill()
@@ -69,7 +69,7 @@
             if (!Exist)
                 return;
 
-            WorldBridge.Enqueue(PostProcessor.Action.Kill, this);
+            WorldFacade.Enqueue(PostProcessor.Action.Kill, this);
             
             EntityMeta* meta = Meta;
             meta->IsAlive = false;

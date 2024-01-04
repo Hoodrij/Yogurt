@@ -63,7 +63,7 @@ namespace Yogurt
                             }
 
                             meta->Clear();
-                            WorldBridge.RemoveEntity(entity);
+                            WorldFacade.RemoveEntity(entity);
                         }
                         break;
                 }
