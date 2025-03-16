@@ -1,6 +1,7 @@
 root = true
 [*]
 
+
 # Microsoft .NET properties
 csharp_preferred_modifier_order = public, private, protected, internal, file, new, static, abstract, virtual, sealed, readonly, override, extern, unsafe, volatile, async, required:error
 csharp_prefer_braces = true:none
