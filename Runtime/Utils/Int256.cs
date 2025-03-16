@@ -32,16 +32,16 @@ namespace Yogurt
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong Lsh(ulong a, int n)
         {
-            var n1 = n >> 1;
-            var n2 = n - n1;
+            int n1 = n >> 1;
+            int n2 = n - n1;
             return (a << n1) << n2;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong Rsh(ulong a, int n)
         {
-            var n1 = n >> 1;
-            var n2 = n - n1;
+            int n1 = n >> 1;
+            int n2 = n - n1;
             return (a >> n1) >> n2;
         }
 
