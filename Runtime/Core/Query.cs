@@ -51,7 +51,7 @@ namespace Yogurt
             return this;
         }
 
-        private readonly Group GetGroup()
+        internal readonly Group GetGroup()
         {
             Composition composition = new Composition(Included, Excluded);
             Group group = Group.GetGroup(composition);
@@ -79,7 +79,7 @@ namespace Yogurt
             return this;
         }
         
-        private readonly Group GetGroup()
+        internal readonly Group GetGroup()
         {
             Composition composition = new Composition(Included, Excluded);
             Group group = Group.GetGroup(composition);
