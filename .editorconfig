@@ -1,0 +1,47 @@
+root = true
+[*]
+
+# Microsoft .NET properties
+csharp_preferred_modifier_order = public, private, protected, internal, file, new, static, abstract, virtual, sealed, readonly, override, extern, unsafe, volatile, async, required:error
+csharp_prefer_braces = true:none
+csharp_style_expression_bodied_accessors = true:none
+csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_methods = false:none
+csharp_style_expression_bodied_properties = true:none
+csharp_style_namespace_declarations = file_scoped:none
+csharp_style_var_elsewhere = false:error
+csharp_style_var_for_built_in_types = false:error
+csharp_style_var_when_type_is_apparent = false:error
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:error
+
+# ReSharper properties
+resharper_braces_for_for = required
+resharper_braces_for_foreach = required
+resharper_braces_for_ifelse = not_required_for_both
+resharper_braces_for_while = required
+resharper_braces_redundant = true
+resharper_csharp_keep_blank_lines_in_code = 1
+resharper_csharp_keep_blank_lines_in_declarations = 1
+resharper_for_built_in_types = use_explicit_type
+resharper_local_function_body = block_body
+
+# ReSharper inspection severities
+resharper_c_sharp_warnings_cs4014_highlighting = error
+resharper_arrange_accessor_owner_body_highlighting = none
+resharper_arrange_attributes_highlighting = error
+resharper_arrange_constructor_or_destructor_body_highlighting = none
+resharper_arrange_local_function_body_highlighting = none
+resharper_arrange_method_or_operator_body_highlighting = none
+resharper_arrange_var_keywords_in_deconstructing_declaration_highlighting = warning
+resharper_enforce_do_while_statement_braces_highlighting = error
+resharper_enforce_fixed_statement_braces_highlighting = error
+resharper_enforce_foreach_statement_braces_highlighting = error
+resharper_enforce_for_statement_braces_highlighting = error
+resharper_enforce_if_statement_braces_highlighting = error
+resharper_enforce_lock_statement_braces_highlighting = error
+resharper_enforce_using_statement_braces_highlighting = error
+resharper_enforce_while_statement_braces_highlighting = error
+resharper_suggest_discard_declaration_var_style_highlighting = warning
+resharper_suggest_var_or_type_elsewhere_highlighting = error
+resharper_suggest_var_or_type_simple_types_highlighting = error
+resharper_separate_local_functions_with_jump_statement_highlighting = suggestion
