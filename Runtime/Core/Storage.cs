@@ -43,7 +43,7 @@ namespace Yogurt
 
     internal class Storage<T> : Storage where T : IComponent
     {
-        private T[] components = new T[Consts.INITIAL_ENTITIES_COUNT / 2];
+        private T[] components = new T[Consts.INITIAL_ENTITIES_COUNT];
         public override IComponent[] ComponentsArray => components as IComponent[];
         
         public Storage()
@@ -56,7 +56,7 @@ namespace Yogurt
         {
             if (entity >= components.Length)
             {
-                Array.Resize(ref components, entity + entity / 2);
+                Array.Resize(ref components, entity + entity);
             }
             
             components[entity] = (T) component;
