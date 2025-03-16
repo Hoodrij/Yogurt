@@ -18,9 +18,9 @@ namespace Yogurt
             return new QueryOfEntity().With<TComponent>();
         }
 
-        public static ref TComponent Single<TComponent>() where TComponent : IComponent
+        public static TComponent Single<TComponent>() where TComponent : IComponent
         {
-            return ref new QueryOfEntity().With<TComponent>().Single().Get<TComponent>();
+            return Of<TComponent>().Single().Get<TComponent>();
         }
         
         public static QueryOfAspect<TAspect> Of<TAspect>(Void _ = default) where TAspect : struct, IAspect
@@ -30,11 +30,11 @@ namespace Yogurt
         
         public static TAspect Single<TAspect>(Void _ = default) where TAspect : struct, IAspect
         {
-            return Of<TAspect>().GetGroup().Single().As<TAspect>();
+            return Of<TAspect>().Single().As<TAspect>();
         }
     }
 
-    public struct QueryOfEntity : Query, IEnumerable<Entity>
+    public ref struct QueryOfEntity
     {
         internal Mask Included;
         internal Mask Excluded;
@@ -51,19 +51,18 @@ namespace Yogurt
             return this;
         }
 
-        private Group GetGroup()
+        private readonly Group GetGroup()
         {
             Composition composition = new Composition(Included, Excluded);
             Group group = Group.GetGroup(composition);
             return group;
         }
-        
-        public IEnumerator<Entity> GetEnumerator() => GetGroup().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public Entity Single() => GetGroup().Single();
+
+        public readonly EntitiesEnumerator GetEnumerator() => GetGroup().GetEntities();
+        public readonly Entity Single() => GetGroup().Single();
     }
     
-    public struct QueryOfAspect<TAspect> : Query, IEnumerable<TAspect> where TAspect : struct, IAspect
+    public ref struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
     {
         internal Mask Included;
         internal Mask Excluded;
@@ -80,22 +79,14 @@ namespace Yogurt
             return this;
         }
         
-        internal Group GetGroup()
+        private readonly Group GetGroup()
         {
             Composition composition = new Composition(Included, Excluded);
             Group group = Group.GetGroup(composition);
             return group;
         }
         
-        public IEnumerator<TAspect> GetEnumerator()
-        {
-            foreach (Entity entity in GetGroup())
-            {
-                yield return entity.As<TAspect>();
-            }
-        }
-        
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public TAspect Single() => GetGroup().Single().As<TAspect>();
+        public readonly AspectsEnumerator<TAspect> GetEnumerator() => GetGroup().GetAspects<TAspect>();
+        public readonly TAspect Single() => GetGroup().Single().As<TAspect>();
     }
 }

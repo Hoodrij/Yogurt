@@ -26,8 +26,10 @@ namespace Yogurt
         
         public IEnumerable<ComponentID> GetIds()
         {
-            foreach (byte id in included.And(excluded).GetBytes()) 
+            foreach (byte id in included.And(excluded).GetBytes())
+            {
                 yield return id;
+            }
         }
 
         public override int GetHashCode()

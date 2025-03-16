@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Yogurt
 {
-    internal class Group : IEquatable<Group>, IComparable<Group>
+    internal class Group
     {
         internal static Dictionary<Composition, Group> Cache = new();
 
@@ -48,12 +48,12 @@ namespace Yogurt
         public Entity Single()
         {
             WorldFacade.UpdateWorld();
-            if (entities.Count > 0)
-            {
-                return entities.First();
-            }
-
-            return Entity.Null;
+            if (entities.Count <= 0) 
+                return Entity.Null;
+            
+            HashSet<Entity>.Enumerator enumerator = entities.GetEnumerator();
+            enumerator.MoveNext();
+            return enumerator.Current;
         }
 
         internal unsafe void ProcessEntity(Entity entity, EntityMeta* meta)
@@ -84,42 +84,16 @@ namespace Yogurt
             return entities.Remove(entity);
         }
 
-        public bool Equals(Group other)
-        {
-            return GetHashCode() == other?.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            return obj.GetType() == GetType() && Equals((Group) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return composition.Hash;
-        }
-
-        public IEnumerator<Entity> GetEnumerator()
+        public EntitiesEnumerator GetEntities()
         {
             WorldFacade.UpdateWorld();
-            return entities.GetEnumerator();
+            return new EntitiesEnumerator(entities);
         }
-
-        public int CompareTo(Group other)
+        
+        public AspectsEnumerator<TAspect> GetAspects<TAspect>() where TAspect : struct, IAspect
         {
-            if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
-            return GetHashCode().CompareTo(other.GetHashCode());
+            WorldFacade.UpdateWorld();
+            return new AspectsEnumerator<TAspect>(entities);
         }
     }
 }
