@@ -51,7 +51,7 @@ namespace Yogurt
             return this;
         }
 
-        internal readonly Group GetGroup()
+        private readonly Group GetGroup()
         {
             Composition composition = new Composition(Included, Excluded);
             Group group = Group.GetGroup(composition);
@@ -59,7 +59,6 @@ namespace Yogurt
         }
 
         public readonly EntitiesEnumerator GetEnumerator() => GetGroup().GetEntities();
-        public readonly Entity Single() => GetGroup().Single();
     }
     
     public ref struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
@@ -78,8 +77,8 @@ namespace Yogurt
             Excluded.Set(ComponentID.Of<TComponent>());
             return this;
         }
-        
-        internal readonly Group GetGroup()
+
+        private readonly Group GetGroup()
         {
             Composition composition = new Composition(Included, Excluded);
             Group group = Group.GetGroup(composition);
@@ -87,6 +86,5 @@ namespace Yogurt
         }
         
         public readonly AspectsEnumerator<TAspect> GetEnumerator() => GetGroup().GetAspects<TAspect>();
-        public readonly TAspect Single() => GetGroup().Single().As<TAspect>();
     }
 }

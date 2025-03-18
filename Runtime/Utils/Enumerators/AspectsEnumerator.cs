@@ -6,12 +6,12 @@ namespace Yogurt
     {
         public int Count { get; }
         
-        private HashSet<Entity>.Enumerator enumerator;
+        private EntitiesEnumerator enumerator;
 
-        public AspectsEnumerator(HashSet<Entity> entities)
+        public AspectsEnumerator(EntitiesEnumerator entities)
         {
-            Count = entities.Count;
-            enumerator = entities.GetEnumerator();
+            enumerator = entities;
+            Count = enumerator.Count;
         }
 
         public AspectsEnumerator<TAspect> GetEnumerator() => this;

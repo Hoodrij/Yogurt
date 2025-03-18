@@ -8,7 +8,7 @@ namespace Yogurt
     {
         internal static Dictionary<Composition, Group> Cache = new();
 
-        private HashSet<Entity> entities = new(Consts.INITIAL_ENTITIES_COUNT);
+        private EntitiesSparseSet entities = new(Consts.INITIAL_ENTITIES_COUNT);
         private readonly Composition composition;
 
         public static Group GetGroup(Composition composition)
@@ -45,17 +45,6 @@ namespace Yogurt
             entities.Clear();
         }
         
-        public Entity Single()
-        {
-            WorldFacade.UpdateWorld();
-            if (entities.Count <= 0) 
-                return Entity.Null;
-            
-            HashSet<Entity>.Enumerator enumerator = entities.GetEnumerator();
-            enumerator.MoveNext();
-            return enumerator.Current;
-        }
-
         internal unsafe void ProcessEntity(Entity entity, EntityMeta* meta)
         {
             if (composition.Fits(meta))
@@ -76,12 +65,20 @@ namespace Yogurt
 
         private bool TryAdd(Entity entity)
         {
-            return entities.Add(entity);
+            if (entities.Contains(entity))
+                return false;
+
+            entities.Add(entity);
+            return true;
         }
 
         internal bool TryRemove(Entity entity)
         {
-            return entities.Remove(entity);
+            if (!entities.Contains(entity))
+                return false;
+
+            entities.Remove(entity);
+            return true;
         }
 
         public EntitiesEnumerator GetEntities()
@@ -92,9 +89,10 @@ namespace Yogurt
         public AspectsEnumerator<TAspect> GetAspects<TAspect>() where TAspect : struct, IAspect
         {
             WorldFacade.UpdateWorld();
-            return new AspectsEnumerator<TAspect>(entities);
+            return new AspectsEnumerator<TAspect>(GetEntities());
         }
 
-        public IEnumerable<Entity> AsEnumerable() => entities.AsEnumerable();
+        // public IEnumerable<Entity> AsEnumerable() 
+            // => entities.Dense.AsEnumerable().Select(item => item.Value);
     }
 }

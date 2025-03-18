@@ -5,17 +5,29 @@ namespace Yogurt
     public ref struct EntitiesEnumerator
     {
         public int Count { get; }
+        private int index;
         
-        private HashSet<Entity>.Enumerator enumerator;
+        private EntitiesSparseSet entities;
 
-        public EntitiesEnumerator(HashSet<Entity> entities)
+        public EntitiesEnumerator(EntitiesSparseSet entities)
         {
+            this.entities = entities;
             Count = entities.Count;
-            enumerator = entities.GetEnumerator();
+            Current = default;
+            index = 0;
         }
 
         public EntitiesEnumerator GetEnumerator() => this;
-        public Entity Current => enumerator.Current;
-        public bool MoveNext() => enumerator.MoveNext();
+        public Entity Current { get; private set; }
+
+        public bool MoveNext()
+        {
+            if (index >= Count)
+                return false;
+
+            Current = entities.Dense[index].Value;
+            index++;
+            return true;
+        }
     }
 }

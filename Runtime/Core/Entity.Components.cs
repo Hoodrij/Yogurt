@@ -2,7 +2,7 @@
 {
     public unsafe partial struct Entity
     {
-        internal EntityMeta* Meta => WorldFacade.GetMeta(ID);
+        internal EntityMeta* Meta => WorldFacade.GetMeta(this);
         
         public Entity Add<T>(T component) where T : IComponent
         {
