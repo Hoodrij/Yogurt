@@ -66,12 +66,7 @@ namespace Yogurt
         {
             return entity.ID;
         }
-
-        public static implicit operator Entity(int id)
-        {
-            return new Entity(id);
-        }
-
+        
         public static bool operator ==(Entity entity1, Entity entity2)
         {
             return entity1.ID == entity2.ID && entity1.Age == entity2.Age;

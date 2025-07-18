@@ -18,6 +18,7 @@
         public static void Remove<TComponent>(this IAspect aspect) where TComponent : IComponent => aspect.Entity.Remove<TComponent>();
         public static TAspect Get<TAspect>(this IAspect aspect, Void _ = default) where TAspect : struct, IAspect => aspect.Entity.As<TAspect>();
         public static TOtherAspect As<TOtherAspect>(this IAspect aspect) where TOtherAspect : struct, IAspect => aspect.Entity.As<TOtherAspect>();
+        public static TAspect SetParent<TAspect>(this IAspect aspect, TAspect parent) where TAspect : struct, IAspect => aspect.Entity.SetParent(parent).As<TAspect>();
 
         public static string Name(this IAspect aspect)
         {
