@@ -1,9 +1,9 @@
 ﻿namespace Yogurt.Tests
 {
-    internal struct AnyAspect : IAspect
+    internal struct AnyAspect : IAspect<AnyAspect>
     {
         public Entity Entity { get; set; }
 
-        public AnyComponent comp => this.Get<AnyComponent>();
+        public AnyComponent comp => Entity.Get<AnyComponent>();
     }
 }

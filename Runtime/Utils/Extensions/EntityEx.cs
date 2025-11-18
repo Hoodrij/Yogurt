@@ -17,17 +17,17 @@ namespace Yogurt
             return result;
         }
 
-        public static TAspect As<TAspect>(this Entity entity) where TAspect : struct, IAspect
+        public static TAspect As<TAspect>(this Entity entity) where TAspect : struct, IAspect<TAspect>
         {
             return new TAspect { Entity = entity };
         }
 
-        public static TAspect SetParent<TAspect>(this TAspect aspect, Entity parent) where TAspect : struct, IAspect
+        public static TAspect SetParent<TAspect>(this TAspect aspect, Entity parent) where TAspect : struct, IAspect<TAspect>
         {
             return aspect.Entity.SetParent(parent).As<TAspect>();
         }
         
-        public static Entity SetParent<TAspect>(this Entity entity, TAspect parent) where TAspect : struct, IAspect
+        public static Entity SetParent<TAspect>(this Entity entity, TAspect parent) where TAspect : struct, IAspect<TAspect>
         {
             return entity.SetParent(parent.Entity);
         }

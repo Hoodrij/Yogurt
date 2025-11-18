@@ -20,7 +20,7 @@ namespace Yogurt
             {
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (!type.GetInterfaces().Contains(typeof(IComponent)) || type.IsGenericType) 
+                    if (type.IsGenericType || !type.GetInterfaces().Contains(typeof(IComponent))) 
                         continue;
                     Type genericStorage = typeof(Storage<>).MakeGenericType(type);
                     Activator.CreateInstance(genericStorage);

@@ -13,24 +13,24 @@ namespace Yogurt
     /// </summary>
     public interface Query
     {
-        public static QueryOfEntity Of<TComponent>() where TComponent : IComponent
+        static QueryOfEntity Of<TComponent>() where TComponent : IComponent
         {
             return new QueryOfEntity().With<TComponent>();
         }
 
-        public static TComponent Single<TComponent>() where TComponent : IComponent
+        static TComponent Single<TComponent>() where TComponent : IComponent
         {
             return Of<TComponent>().Single().Get<TComponent>();
         }
-        
-        public static QueryOfAspect<TAspect> Of<TAspect>(Void _ = default) where TAspect : struct, IAspect
+
+        static QueryOfAspect<TAspect> Of<TAspect>(Void _ = default) where TAspect : struct, IAspect<TAspect>
         {
             return AspectCache.Get<TAspect>();
         }
-        
-        public static TAspect Single<TAspect>(Void _ = default) where TAspect : struct, IAspect
+
+        static TAspect Single<TAspect>(Void _ = default) where TAspect : struct, IAspect<TAspect>
         {
-            return Of<TAspect>().Single().As<TAspect>();
+            return Of<TAspect>().Single();
         }
     }
 
@@ -62,7 +62,7 @@ namespace Yogurt
         public readonly Entity Single() => GetGroup().Single();
     }
     
-    public ref struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
+    public ref struct QueryOfAspect<TAspect> where TAspect : struct, IAspect<TAspect>
     {
         internal Mask Included;
         internal Mask Excluded;

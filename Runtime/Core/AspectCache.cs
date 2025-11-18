@@ -8,7 +8,7 @@ namespace Yogurt
     {
         private static Dictionary<Type, Mask> cache = new();
         
-        public static QueryOfAspect<TAspect> Get<TAspect>() where TAspect : struct, IAspect
+        public static QueryOfAspect<TAspect> Get<TAspect>() where TAspect : struct, IAspect<TAspect>
         {
             QueryOfAspect<TAspect> query = new QueryOfAspect<TAspect>();
             Type aspectType = typeof(TAspect);
@@ -28,15 +28,19 @@ namespace Yogurt
             Mask mask = default;
             foreach (PropertyInfo field in aspectType.GetProperties())
             {
-                Type componentType = field.PropertyType;
-                if (componentType.GetInterface(nameof(IComponent)) != null)
+                Type propertyType = field.PropertyType;
+                if (propertyType.GetInterface(nameof(IComponent)) != null)
                 {
-                    mask.Set(ComponentID.Of(componentType));
+                    mask.Set(ComponentID.Of(propertyType));
                 }
-                    
-                if (componentType.GetInterface(nameof(IAspect)) != null)
+
+                foreach (Type type in propertyType.GetInterfaces())
                 {
-                    mask |= GenerateMask(componentType);
+                    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IAspect<>))
+                    {
+                        mask |= GenerateMask(propertyType);
+                        break;
+                    }
                 }
             }
 

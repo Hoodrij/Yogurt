@@ -25,7 +25,7 @@ namespace Yogurt
             return query.GetEnumerator().Count;
         }
 
-        public static int Count<TAspect>(this QueryOfAspect<TAspect> query, Func<TAspect, bool> predicate) where TAspect : struct, IAspect
+        public static int Count<TAspect>(this QueryOfAspect<TAspect> query, Func<TAspect, bool> predicate) where TAspect : struct, IAspect<TAspect>
         {
             AspectsEnumerator<TAspect> enumerator = query.GetEnumerator();
             int count = 0;
@@ -37,7 +37,7 @@ namespace Yogurt
             return count;
         }
         
-        public static int Count<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect
+        public static int Count<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect<TAspect>
         {
             return query.GetEnumerator().Count;
         }

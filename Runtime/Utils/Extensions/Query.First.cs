@@ -23,7 +23,7 @@ namespace Yogurt
             return default;
         }
         
-        public static TAspect First<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect
+        public static TAspect First<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect<TAspect>
         {
             AspectsEnumerator<TAspect> enumerator = query.GetEnumerator();
             return enumerator.MoveNext() 
@@ -31,7 +31,7 @@ namespace Yogurt
                 : default;
         }
         
-        public static TAspect First<TAspect>(this QueryOfAspect<TAspect> query, Predicate<TAspect> predicate) where TAspect : struct, IAspect
+        public static TAspect First<TAspect>(this QueryOfAspect<TAspect> query, Predicate<TAspect> predicate) where TAspect : struct, IAspect<TAspect>
         {
             AspectsEnumerator<TAspect> enumerator = query.GetEnumerator();
             while (enumerator.MoveNext())
