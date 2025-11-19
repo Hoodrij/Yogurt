@@ -14,12 +14,12 @@ namespace Yogurt
             return !query.Any();
         }
 
-        public static bool None<TAspect>(this QueryOfAspect<TAspect> query, Func<TAspect, bool> predicate) where TAspect : struct, IAspect<TAspect>
+        public static bool None<TAspect>(this QueryOfAspect<TAspect> query, Func<TAspect, bool> predicate) where TAspect : struct, IAspect
         {
             return !query.Any(predicate);
         }
 
-        public static bool None<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect<TAspect>
+        public static bool None<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect
         {
             return !query.Any();
         }

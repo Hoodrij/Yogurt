@@ -10,7 +10,7 @@ namespace Yogurt
             return query.GetGroup().AsEnumerable();
         }
         
-        public static IEnumerable<TAspect> AsEnumerable<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect<TAspect>
+        public static IEnumerable<TAspect> AsEnumerable<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect
         {
             return query.GetGroup().AsEnumerable().Select(entity => entity.As<TAspect>());
         }

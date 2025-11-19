@@ -20,7 +20,7 @@ namespace Yogurt
             return query.GetEnumerator().MoveNext();
         }
         
-        public static bool Any<TAspect>(this QueryOfAspect<TAspect> query, Func<TAspect, bool> predicate) where TAspect : struct, IAspect<TAspect>
+        public static bool Any<TAspect>(this QueryOfAspect<TAspect> query, Func<TAspect, bool> predicate) where TAspect : struct, IAspect
         {
             AspectsEnumerator<TAspect> enumerator = query.GetEnumerator();
             while (enumerator.MoveNext())
@@ -31,7 +31,7 @@ namespace Yogurt
             return false;
         }
         
-        public static bool Any<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect<TAspect>
+        public static bool Any<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect
         {
             return query.GetEnumerator().MoveNext();
         }

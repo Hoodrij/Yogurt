@@ -89,7 +89,7 @@ namespace Yogurt
             WorldFacade.UpdateWorld();
             return new EntitiesEnumerator(entities);
         }
-        public AspectsEnumerator<TAspect> GetAspects<TAspect>() where TAspect : struct, IAspect<TAspect>
+        public AspectsEnumerator<TAspect> GetAspects<TAspect>() where TAspect : struct, IAspect
         {
             WorldFacade.UpdateWorld();
             return new AspectsEnumerator<TAspect>(entities);

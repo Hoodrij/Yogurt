@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Yogurt
 {
-    public ref struct AspectsEnumerator<TAspect> where TAspect : struct, IAspect<TAspect>
+    public ref struct AspectsEnumerator<TAspect> where TAspect : struct, IAspect
     {
         public int Count { get; }
         

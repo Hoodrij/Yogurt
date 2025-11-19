@@ -23,12 +23,12 @@ namespace Yogurt
             return Of<TComponent>().Single().Get<TComponent>();
         }
 
-        static QueryOfAspect<TAspect> Of<TAspect>(Void _ = default) where TAspect : struct, IAspect<TAspect>
+        static QueryOfAspect<TAspect> Of<TAspect>(Void _ = default) where TAspect : struct, IAspect
         {
             return AspectCache.Get<TAspect>();
         }
 
-        static TAspect Single<TAspect>(Void _ = default) where TAspect : struct, IAspect<TAspect>
+        static TAspect Single<TAspect>(Void _ = default) where TAspect : struct, IAspect
         {
             return Of<TAspect>().Single();
         }
@@ -62,7 +62,7 @@ namespace Yogurt
         public readonly Entity Single() => GetGroup().Single();
     }
     
-    public ref struct QueryOfAspect<TAspect> where TAspect : struct, IAspect<TAspect>
+    public ref struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
     {
         internal Mask Included;
         internal Mask Excluded;
