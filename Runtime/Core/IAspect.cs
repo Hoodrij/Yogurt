@@ -18,8 +18,8 @@
         // public static bool Has<TComponent>(this Aspect aspect)  where TComponent : IComponent => aspect.Entity.Has<TComponent>();
         // public static void Remove<TComponent>(this Aspect aspect)  where TComponent : IComponent => aspect.Entity.Remove<TComponent>();
         
-        public static Entity SetParent(this Entity entity, IAspect parent) => entity.SetParent(parent.Entity);
-        public static IAspect SetParent<TAspect>(this IAspect aspect, IAspect parent) where TAspect : struct, IAspect => aspect.Entity.SetParent(parent).As<TAspect>();
+        public static Entity SetParent<TAspect>(this Entity entity, TAspect parent) where TAspect : struct, IAspect => entity.SetParent(parent.Entity);
+        public static IAspect SetParent<TAspect>(this TAspect aspect, IAspect parent) where TAspect : struct, IAspect => aspect.Entity.SetParent(parent.Entity).As<TAspect>();
         public static TAspect SetParent<TAspect>(this TAspect aspect, Entity parent) where TAspect : struct, IAspect => aspect.Entity.SetParent(parent).As<TAspect>();
         
         public static TOther As<TOther>(this IAspect aspect) where TOther : struct, IAspect => aspect.Entity.As<TOther>();
