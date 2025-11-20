@@ -28,8 +28,6 @@ namespace Yogurt
             }
         }
 
-        public abstract void Set(IComponent component, Entity entity);
-
         public static Storage Of(ComponentID componentId)
         {
             return All[componentId];
@@ -52,14 +50,14 @@ namespace Yogurt
             All[id] = this;
         }
 
-        public override void Set(IComponent component, Entity entity)
+        public void Set(T component, Entity entity)
         {
             if (entity >= components.Length)
             {
                 Array.Resize(ref components, entity + entity);
             }
             
-            components[entity] = (T) component;
+            components[entity] = component;
         }
 
         public ref T Get(Entity entity)

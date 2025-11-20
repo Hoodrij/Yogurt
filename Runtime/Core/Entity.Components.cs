@@ -16,9 +16,9 @@
         {
             this.DebugCheckAlive();
             
-            ComponentID componentID = ComponentID.Of(component.GetType());
+            ComponentID componentID = ComponentID.Of<T>();
             Meta->ComponentsMask.Set(componentID);
-            Storage.Of(componentID).Set(component, this);
+            Storage.Of<T>().Set(component, this);
             WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
 
             return this;
