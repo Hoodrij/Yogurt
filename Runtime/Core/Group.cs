@@ -26,8 +26,11 @@ namespace Yogurt
             this.composition = composition;
             Cache.Add(composition, this);
 
-            foreach (ComponentID componentID in composition.GetIds())
+            Span<ComponentID> buffer = stackalloc ComponentID[Consts.MAX_COMPONENTS];
+            int count = composition.GetIds(buffer);
+            for (int i = 0; i < count; i++)
             {
+                ComponentID componentID = buffer[i];
                 Storage.Of(componentID).Groups.Push(this);
             }
             

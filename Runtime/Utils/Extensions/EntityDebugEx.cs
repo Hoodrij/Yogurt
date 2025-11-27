@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -8,8 +9,13 @@ namespace Yogurt
         {
             List<IComponent> result = new();
             EntityMeta* meta = entity.Meta;
-            foreach (ComponentID componentId in meta->ComponentsMask.GetBytes())
+
+            Span<ComponentID> buffer = stackalloc ComponentID[Consts.MAX_COMPONENTS];
+            int count = meta->ComponentsMask.GetIDs(buffer);
+
+            for (int i = 0; i < count; i++)
             {
+                ComponentID componentId = buffer[i];
                 Storage storage = Storage.Of(componentId);
                 result.Add(storage.ComponentsArray[entity]);
             }

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace Yogurt
+﻿namespace Yogurt
 {
     /// <summary>
     /// QueryOfEntity query = Query.Of Player>();

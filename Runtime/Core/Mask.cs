@@ -1,111 +1,180 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
-    internal struct Mask : IComparable<Mask>, IEquatable<Mask>
+    internal unsafe struct Mask : IComparable<Mask>, IEquatable<Mask>
     {
-        public bool IsEmpty => value == Int256.Zero;
-        
-        private Int256 value;
+        private fixed ulong bits[Consts.MASK_ULONGS];
 
-        public void Set(byte other)
+        public readonly bool IsEmpty
         {
-            Int256 otherMask = Int256.One << other;
-            value |= otherMask;
+            get
+            {
+                for (int i = 0; i < Consts.MASK_ULONGS; i++)
+                {
+                    if (bits[i] != 0) 
+                        return false;
+                }
+
+                return true;
+            }
         }
-        
-        public void UnSet(byte other)
+
+        public void Set(ushort componentId)
         {
-            Int256 otherMask = Int256.One << other;
-            value &= ~otherMask;
+            int ulongIndex = componentId / 64;
+            int bitIndex = componentId % 64;
+
+            bits[ulongIndex] |= 1UL << bitIndex;
         }
-        
-        public bool Has(byte other)
+
+        public void UnSet(ushort componentId)
         {
-            Int256 otherMask = Int256.One << other;
-            return (value & otherMask) == otherMask;
+            int ulongIndex = componentId / 64;
+            int bitIndex = componentId % 64;
+
+            bits[ulongIndex] &= ~(1UL << bitIndex);
+        }
+
+        public readonly bool Has(ushort componentId)
+        {
+            int ulongIndex = componentId / 64;
+            int bitIndex = componentId % 64;
+
+            return (bits[ulongIndex] & (1UL << bitIndex)) != 0;
         }
 
         public readonly bool HasAny(Mask other)
         {
-            return (value & other.value) != Int256.Zero;
+            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            {
+                if ((bits[i] & other.bits[i]) != 0)
+                    return true;
+            }
+
+            return false;
         }
 
         public readonly bool HasAll(Mask other)
         {
-            return (value & other.value) == other.value;
+            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            {
+                if ((bits[i] & other.bits[i]) != other.bits[i])
+                    return false;
+            }
+
+            return true;
         }
 
         public void Clear()
         {
-            value = Int256.Zero;
+            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            {
+                bits[i] = 0;
+            }
         }
 
         public readonly Mask And(Mask other)
         {
             Mask result = default;
-            result.value = value | other.value;
+            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            {
+                result.bits[i] = bits[i] | other.bits[i];
+            }
+
             return result;
         }
 
-        public IEnumerable<byte> GetBytes()
+        public readonly int GetIDs(Span<ComponentID> buffer)
         {
-            for (byte i = 0; i < byte.MaxValue; i++)
+            int count = 0;
+            for (int ulongIndex = 0; ulongIndex < Consts.MASK_ULONGS; ulongIndex++)
             {
-                if (Has(i))
+                ulong current = bits[ulongIndex];
+                while (current != 0)
                 {
-                    yield return i;
+                    int bitIndex = TrailingZeroCount(current);
+                    buffer[count++] = (ushort)(ulongIndex * 64 + bitIndex);
+                    current &= current - 1; // Clear the lowest set bit
                 }
             }
+            return count;
         }
-        
-        public static Mask operator <<(Mask mask, int shift)
+
+        private static int TrailingZeroCount(ulong value)
         {
-            mask.value <<= shift;
-            return mask;
+            if (value == 0) return 64;
+            int count = 0;
+            while ((value & 1) == 0)
+            {
+                value >>= 1;
+                count++;
+            }
+            return count;
         }
-        
-        public static Mask operator >>(Mask mask, int shift)
-        {
-            mask.value >>= shift;
-            return mask;
-        }
-        
-        public static Mask operator |(Mask mask, Mask other)
+
+        public static Mask operator & (Mask mask, Mask other)
         {
             return mask.And(other);
         }
-        
+
         public override string ToString()
         {
             return Name;
         }
-        
-        public int CompareTo(Mask other)
+
+        public readonly int CompareTo(Mask other)
         {
-            return value.CompareTo(other.value);
+            for (int i = Consts.MASK_ULONGS - 1; i >= 0; i--)
+            {
+                if (bits[i] != other.bits[i])
+                    return bits[i].CompareTo(other.bits[i]);
+            }
+
+            return 0;
         }
 
-        public bool Equals(Mask other)
+        public readonly bool Equals(Mask other)
         {
-            return value.Equals(other.value);
+            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            {
+                if (bits[i] != other.bits[i])
+                    return false;
+            }
+
+            return true;
         }
 
-        public override int GetHashCode()
+        public readonly override int GetHashCode()
         {
-            return value.GetHashCode();
+            HashCode hash = new HashCode();
+            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            {
+                hash.Add(bits[i]);
+            }
+
+            return hash.ToHashCode();
         }
-        
-        private string Name
+
+        private readonly string Name
         {
             get
             {
-                string components = string.Join(", ", GetBytes().Select(b => $"{((ComponentID)b).Name}"));
-                return components;
+                Span<ComponentID> buffer = stackalloc ComponentID[Consts.MAX_COMPONENTS];
+                int count = GetIDs(buffer);
+
+                if (count == 0)
+                    return string.Empty;
+
+                string[] names = new string[count];
+                for (int i = 0; i < count; i++)
+                {
+                    names[i] = ((ComponentID)buffer[i]).Name;
+                }
+
+                return string.Join(", ", names);
             }
         }
     }

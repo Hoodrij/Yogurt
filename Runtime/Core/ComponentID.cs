@@ -9,13 +9,13 @@ namespace Yogurt
     {
         private static Dictionary<Type, ComponentID> componentsIds = new(Consts.INITIAL_COMPONENTS_COUNT);
 
-        private readonly byte ID;
+        private readonly ushort ID;
 
-        private ComponentID(byte id)
+        private ComponentID(ushort id)
         {
             ID = id;
         }
-        
+
         public static ComponentID Of(Type type)
         {
             if (componentsIds.TryGetValue(type, out ComponentID componentId))
@@ -23,19 +23,25 @@ namespace Yogurt
                 return componentId;
             }
 
-            componentId = new ComponentID((byte)componentsIds.Values.Count);
+            ushort newId = (ushort)componentsIds.Values.Count;
+            if (newId >= Consts.MAX_COMPONENTS)
+            {
+                throw new InvalidOperationException($"Maximum component types exceeded ({Consts.MAX_COMPONENTS}). Increase MASK_ULONGS in Consts.cs");
+            }
+
+            componentId = new ComponentID(newId);
             componentsIds.Add(type, componentId);
             return componentId;
         }
-        
+
         public static ComponentID Of<T>() where T : IComponent => Of(typeof(T));
-        
-        public static implicit operator byte(ComponentID id)
+
+        public static implicit operator ushort(ComponentID id)
         {
             return id.ID;
         }
 
-        public static implicit operator ComponentID(byte id)
+        public static implicit operator ComponentID(ushort id)
         {
             return new ComponentID(id);
         }

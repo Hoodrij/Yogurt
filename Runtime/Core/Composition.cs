@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Yogurt
@@ -24,12 +23,9 @@ namespace Yogurt
                    && !meta->ComponentsMask.HasAny(excluded);
         }
         
-        public IEnumerable<ComponentID> GetIds()
+        public int GetIds(Span<ComponentID> buffer)
         {
-            foreach (byte id in included.And(excluded).GetBytes())
-            {
-                yield return id;
-            }
+            return included.And(excluded).GetIDs(buffer);
         }
 
         public override int GetHashCode()
