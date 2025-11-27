@@ -75,7 +75,7 @@ namespace Yogurt
             // Big swaps first
             if (n > 192)
             {
-                if (n > 256)
+                if (n >= 256)
                 {
                     res = Zero;
                     return;
@@ -162,7 +162,7 @@ namespace Yogurt
             // Big swaps first
             if (n > 192)
             {
-                if (n > 256)
+                if (n >= 256)
                 {
                     res = Zero;
                     return;
