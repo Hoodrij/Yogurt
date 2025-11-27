@@ -37,7 +37,6 @@ namespace Yogurt
                 if (propertyType.GetInterface(nameof(IAspect)) != null)
                 {
                     mask |= GenerateMask(propertyType);
-                    break;
                 }
             }
 
