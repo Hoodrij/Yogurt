@@ -52,12 +52,23 @@ namespace Yogurt
 
         public void Set(T component, Entity entity)
         {
-            if (entity >= components.Length)
-            {
-                Array.Resize(ref components, entity + entity);
-            }
-            
+            AssureSize();
             components[entity] = component;
+            return;
+
+            void AssureSize()
+            {
+                if (entity >= components.Length)
+                {
+                    int newSize = components.Length;
+                    while (newSize <= entity)
+                    {
+                        newSize *= 2;
+                    }
+
+                    Array.Resize(ref components, newSize);
+                }
+            }
         }
 
         public ref T Get(Entity entity)
