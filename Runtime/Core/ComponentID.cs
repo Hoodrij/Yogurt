@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
-    internal readonly struct ComponentID
+    internal readonly struct ComponentID : IEquatable<ComponentID>
     {
         private static Dictionary<Type, ComponentID> componentsIds = new(Consts.INITIAL_COMPONENTS_COUNT);
 
@@ -51,6 +51,21 @@ namespace Yogurt
 
                 return "None";
             }
+        }
+
+        public bool Equals(ComponentID other)
+        {
+            return ID == other.ID;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ComponentID other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
         }
     }
 }
