@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -12,22 +13,22 @@ namespace AspectSourceGenerator
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             // Find all struct declarations
-            var structDeclarations = context.SyntaxProvider.CreateSyntaxProvider(
+            IncrementalValuesProvider<(StructDeclarationSyntax StructDeclaration, SemanticModel Semantic)> structDeclarations = context.SyntaxProvider.CreateSyntaxProvider(
                 predicate: (node, _) => node is StructDeclarationSyntax,
                 transform: (ctx, _) => (StructDeclaration: (StructDeclarationSyntax)ctx.Node, Semantic: ctx.SemanticModel))
                 .Where(t => t.StructDeclaration != null);
 
-            var aspectTypes = structDeclarations.Select((t, _) =>
+            IncrementalValuesProvider<INamedTypeSymbol?> aspectTypes = structDeclarations.Select((t, _) =>
             {
-                var model = t.Semantic;
-                var sd = t.StructDeclaration;
-                var symbol = model.GetDeclaredSymbol(sd) as INamedTypeSymbol;
+                SemanticModel? model = t.Semantic;
+                StructDeclarationSyntax? sd = t.StructDeclaration;
+                INamedTypeSymbol? symbol = model.GetDeclaredSymbol(sd) as INamedTypeSymbol;
                 return symbol;
             }).Where(sym => sym != null)
             .Where(sym => sym != null && sym.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "Yogurt.IAspect"));
 
             // Collect aspects and produce source
-            var collected = aspectTypes.Collect();
+            IncrementalValueProvider<ImmutableArray<INamedTypeSymbol?>> collected = aspectTypes.Collect();
 
             context.RegisterSourceOutput(collected, (ctx, types) =>
             {
