@@ -14,7 +14,7 @@ namespace Yogurt
 
         public static void Initialize()
         {
-            All = new Storage[Consts.INITIAL_COMPONENTS_COUNT];
+            All = new Storage[Consts.MAX_COMPONENTS];
 
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {

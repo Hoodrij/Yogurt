@@ -7,7 +7,7 @@ namespace Yogurt
     [DebuggerDisplay("{Name}")]
     internal readonly struct ComponentID : IEquatable<ComponentID>
     {
-        private static Dictionary<Type, ComponentID> componentsIds = new(Consts.INITIAL_COMPONENTS_COUNT);
+        private static Dictionary<Type, ComponentID> componentsIds = new(Consts.MAX_COMPONENTS);
 
         private readonly ushort ID;
 
