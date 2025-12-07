@@ -12,17 +12,17 @@ namespace AspectSourceGenerator
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            // Find all struct declarations
-            IncrementalValuesProvider<(StructDeclarationSyntax StructDeclaration, SemanticModel Semantic)> structDeclarations = context.SyntaxProvider.CreateSyntaxProvider(
-                predicate: (node, _) => node is StructDeclarationSyntax,
-                transform: (ctx, _) => (StructDeclaration: (StructDeclarationSyntax)ctx.Node, Semantic: ctx.SemanticModel))
-                .Where(t => t.StructDeclaration != null);
+            // Find all type declarations (classes, structs, records)
+            IncrementalValuesProvider<(TypeDeclarationSyntax TypeDeclaration, SemanticModel Semantic)> typeDeclarations = context.SyntaxProvider.CreateSyntaxProvider(
+                predicate: (node, _) => node is TypeDeclarationSyntax,
+                transform: (ctx, _) => (TypeDeclaration: (TypeDeclarationSyntax)ctx.Node, Semantic: ctx.SemanticModel))
+                .Where(t => t.TypeDeclaration != null);
 
-            IncrementalValuesProvider<INamedTypeSymbol?> aspectTypes = structDeclarations.Select((t, _) =>
+            IncrementalValuesProvider<INamedTypeSymbol?> aspectTypes = typeDeclarations.Select((t, _) =>
             {
                 SemanticModel? model = t.Semantic;
-                StructDeclarationSyntax? sd = t.StructDeclaration;
-                INamedTypeSymbol? symbol = model.GetDeclaredSymbol(sd) as INamedTypeSymbol;
+                TypeDeclarationSyntax? td = t.TypeDeclaration;
+                INamedTypeSymbol? symbol = model.GetDeclaredSymbol(td) as INamedTypeSymbol;
                 return symbol;
             }).Where(sym => sym != null)
             .Where(sym => sym != null && sym.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "Yogurt.IAspect"));
