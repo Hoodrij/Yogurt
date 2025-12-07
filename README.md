@@ -37,13 +37,15 @@ Assert.IsFalse(entity.Exist);
 
 ### 🏷️ Component
 
-Components are classes that contain data.
+Components are types containing data.
 
 ```csharp
 public class Health : IComponent
 {
     public int Value;
 }
+
+public record struct HealthStruct(int Value) : IComponent;
 ```
 
 Entity has a bunch of methods to operate with components.
@@ -54,7 +56,7 @@ entity.Set(new Health());
 entity.Has<Health>();
 entity.Remove<Health>();
 
-entity.Get<Health>();
+ref entity.Get<Health>();
 entity.TryGet(out Health health);
 ```
 
@@ -67,11 +69,11 @@ public struct PlayerAspect : IAspect
 {
     public Entity Entity { get; set; }
     
-    public PlayerTag Tag => this.Get<PlayerTag>();
-    public Health Health => this.Get<Health>();
-    public Transform Transform => this.Get<Transform>();
+    public PlayerTag Tag => Entity.Get<PlayerTag>();
+    public Health Health => Entity.Get<Health>();
+    public Transform Transform => Entity.Get<Transform>();
         
-    public NestedAspect NestedAspect => this.Get<NestedAspect>();
+    public NestedAspect NestedAspect => Entity.Get<NestedAspect>();
 }
 
 PlayerAspect player = anyEntity.As<PlayerAspect>();
