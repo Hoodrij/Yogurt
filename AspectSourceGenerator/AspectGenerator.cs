@@ -49,8 +49,6 @@ namespace AspectSourceGenerator
                     string access = GetAccessibilityString(t!);
                     sb.AppendLine($"""
                                           // {fullname}
-                                          {access} static bool Exist(this {fullname} aspect) => aspect.Entity.Exist;
-                                          {access} static void Kill(this {fullname} aspect) => aspect.Entity.Kill();
                                           {access} static TComponent Get<TComponent>(this {fullname} aspect)  where TComponent : IComponent => aspect.Entity.Get<TComponent>();
                                           {access} static bool TryGet<TComponent>(this {fullname} aspect, out TComponent component)  where TComponent : IComponent => aspect.Entity.TryGet(out component);
                                           {access} static void Add<TComponent>(this {fullname} aspect, TComponent component)  where TComponent : IComponent => aspect.Entity.Set(component);
