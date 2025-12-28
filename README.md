@@ -4,10 +4,10 @@
 
 
 # Installation
-
-1. Open **Unity Package Manager**
-2. Click ➕ button → “*Add package from git URL…*”
-3. Enter **https://github.com/Hoodrij/Yogurt.git**
+UPM
+```
+https://github.com/Hoodrij/Yogurt.git
+```
 
 # Examples
 
