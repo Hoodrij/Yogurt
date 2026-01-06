@@ -1,24 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Yogurt.Utils;
 
 namespace Yogurt
 {
     internal class Group
     {
-        internal static Dictionary<Composition, Group> Cache = new();
+        internal static Dictionary<Composition, Group> Cache = new(CompositionEqualityComparer.Instance);
 
-        private HashSet<Entity> entities = new(Consts.INITIAL_ENTITIES_COUNT);
+        private HashSet<Entity> entities = new(Consts.INITIAL_ENTITIES_COUNT, comparer: EntityEqualityComparer.Instance);
         private readonly Composition composition;
 
         public static Group GetGroup(Composition composition)
         {
-            if (Cache.TryGetValue(composition, out Group group))
-            {
-                return group;
-            }
-
-            return new Group(composition);
+            return Cache.TryGetValue(composition, out Group group) 
+                ? group 
+                : new Group(composition);
         }
 
         private Group(Composition composition)

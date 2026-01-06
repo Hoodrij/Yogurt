@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Yogurt.Utils;
 
 namespace Yogurt
 {
@@ -6,9 +7,9 @@ namespace Yogurt
     {
         public PostProcessor PostProcessor = new();
         public UnsafeSpan<EntityMeta> EntitiesMetas = new(Consts.INITIAL_ENTITIES_COUNT);
-        public HashSet<Entity> Entities = new(Consts.INITIAL_ENTITIES_COUNT);
+        public HashSet<Entity> Entities = new(Consts.INITIAL_ENTITIES_COUNT, comparer: EntityEqualityComparer.Instance);
         public Queue<Entity> ReleasedEntities = new(Consts.INITIAL_ENTITIES_COUNT);
-        public Dictionary<Entity, Life> Lifes = new(Consts.INITIAL_ENTITIES_COUNT);
+        public Dictionary<Entity, Life> Lifes = new(Consts.INITIAL_ENTITIES_COUNT, comparer: EntityEqualityComparer.Instance);
         
         // 0 index = default = Entity.Null
         private int nextEntityID = 1;
