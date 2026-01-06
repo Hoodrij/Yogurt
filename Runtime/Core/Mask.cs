@@ -24,24 +24,23 @@ namespace Yogurt
 
         public void Set(ushort componentId)
         {
-            int ulongIndex = componentId / 64;
-            int bitIndex = componentId % 64;
-
+            int ulongIndex = componentId >> 6;
+            int bitIndex = componentId & 63;
             bits[ulongIndex] |= 1UL << bitIndex;
         }
 
         public void UnSet(ushort componentId)
         {
-            int ulongIndex = componentId / 64;
-            int bitIndex = componentId % 64;
+            int ulongIndex = componentId >> 6;
+            int bitIndex = componentId & 63;
 
             bits[ulongIndex] &= ~(1UL << bitIndex);
         }
 
         public readonly bool Has(ushort componentId)
         {
-            int ulongIndex = componentId / 64;
-            int bitIndex = componentId % 64;
+            int ulongIndex = componentId >> 6;
+            int bitIndex = componentId & 63;
 
             return (bits[ulongIndex] & (1UL << bitIndex)) != 0;
         }
@@ -81,7 +80,7 @@ namespace Yogurt
             Mask result = default;
             for (int i = 0; i < Consts.MASK_ULONGS; i++)
             {
-                result.bits[i] = bits[i] | other.bits[i];
+                result.bits[i] = bits[i] & other.bits[i];
             }
 
             return result;
@@ -149,13 +148,12 @@ namespace Yogurt
 
         public readonly override int GetHashCode()
         {
-            HashCode hash = new HashCode();
-            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            int hash = (int)bits[0];
+            for (int i = 1; i < Consts.MASK_ULONGS; i++)
             {
-                hash.Add(bits[i]);
+                hash ^= (int)(bits[i] ^ (bits[i] >> 32));
             }
-
-            return hash.ToHashCode();
+            return hash;
         }
 
         private readonly string Name
