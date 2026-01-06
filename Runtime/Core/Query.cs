@@ -31,7 +31,7 @@
         }
     }
 
-    public ref struct QueryOfEntity
+    public struct QueryOfEntity
     {
         internal Mask Included;
         internal Mask Excluded;
@@ -59,7 +59,7 @@
         public readonly Entity Single() => GetGroup().Single();
     }
     
-    public ref struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
+    public struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
     {
         internal Mask Included;
         internal Mask Excluded;

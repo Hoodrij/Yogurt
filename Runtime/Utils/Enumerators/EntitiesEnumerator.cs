@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Yogurt
 {
-    public ref struct EntitiesEnumerator
+    public struct EntitiesEnumerator
     {
         public int Count { get; }
         
