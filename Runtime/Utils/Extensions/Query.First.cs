@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -6,7 +7,7 @@ namespace Yogurt
     {
         public static Entity First(this QueryOfEntity query)
         {
-            EntitiesEnumerator enumerator = query.GetEnumerator();
+            using HashSet<Entity>.Enumerator enumerator = query.GetEnumerator();
             return enumerator.MoveNext() 
                 ? enumerator.Current 
                 : default;
@@ -14,7 +15,7 @@ namespace Yogurt
         
         public static Entity First(this QueryOfEntity query, Predicate<Entity> predicate)
         {
-            EntitiesEnumerator enumerator = query.GetEnumerator();
+            using HashSet<Entity>.Enumerator enumerator = query.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 if (predicate(enumerator.Current))

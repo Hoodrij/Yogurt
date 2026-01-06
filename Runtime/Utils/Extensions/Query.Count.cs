@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -6,7 +7,7 @@ namespace Yogurt
     {
         public static int Count(this QueryOfEntity query, Func<Entity, bool> predicate)
         {
-            EntitiesEnumerator enumerator = query.GetEnumerator();
+            using HashSet<Entity>.Enumerator enumerator = query.GetEnumerator();
             int count = 0;
             while (enumerator.MoveNext())
             {
@@ -18,7 +19,13 @@ namespace Yogurt
         
         public static int Count(this QueryOfEntity query)
         {
-            return query.GetEnumerator().Count;
+            using HashSet<Entity>.Enumerator enumerator = query.GetEnumerator();
+            int count = 0;
+            while (enumerator.MoveNext())
+            {
+                count++;
+            }
+            return count;
         }
 
         public static int Count<TAspect>(this QueryOfAspect<TAspect> query, Func<TAspect, bool> predicate) where TAspect : struct, IAspect

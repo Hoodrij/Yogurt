@@ -1,4 +1,6 @@
-﻿namespace Yogurt
+﻿using System.Collections.Generic;
+
+namespace Yogurt
 {
     /// <summary>
     /// QueryOfEntity query = Query.Of Player>();
@@ -55,7 +57,7 @@
             return group;
         }
 
-        public readonly EntitiesEnumerator GetEnumerator() => GetGroup().GetEntities();
+        public readonly HashSet<Entity>.Enumerator GetEnumerator() => GetGroup().GetEntities();
         public readonly Entity Single() => GetGroup().Single();
     }
     

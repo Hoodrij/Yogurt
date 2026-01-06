@@ -14,7 +14,6 @@ namespace Yogurt
             enumerator = entities.GetEnumerator();
         }
 
-        public AspectsEnumerator<TAspect> GetEnumerator() => this;
         public TAspect Current => enumerator.Current.As<TAspect>();
         public bool MoveNext() => enumerator.MoveNext();
     }

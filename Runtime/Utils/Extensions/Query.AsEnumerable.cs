@@ -6,7 +6,7 @@ namespace Yogurt
     {
         public static IEnumerable<Entity> AsEnumerable(this QueryOfEntity query)
         {
-            EntitiesEnumerator enumerator = query.GetEnumerator();
+            using HashSet<Entity>.Enumerator enumerator = query.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 yield return enumerator.Current;

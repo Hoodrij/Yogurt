@@ -85,10 +85,10 @@ namespace Yogurt
             return entities.Remove(entity);
         }
 
-        public EntitiesEnumerator GetEntities()
+        public HashSet<Entity>.Enumerator GetEntities()
         {
             WorldFacade.UpdateWorld();
-            return new EntitiesEnumerator(entities);
+            return entities.GetEnumerator();
         }
         public AspectsEnumerator<TAspect> GetAspects<TAspect>() where TAspect : struct, IAspect
         {
