@@ -4,7 +4,7 @@ namespace Yogurt
 {
     internal static class WorldFacade
     {
-        internal static World World;
+        public static World World;
         
         public static void Enqueue(PostProcessor.Action action, Entity entity, ComponentID componentID = default)
         {

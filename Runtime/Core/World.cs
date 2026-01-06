@@ -9,7 +9,7 @@ namespace Yogurt
         internal HashSet<Entity> Entities = new(Consts.INITIAL_ENTITIES_COUNT);
         internal Queue<Entity> ReleasedEntities = new(Consts.INITIAL_ENTITIES_COUNT);
         
-        // because 0 index = default = Entity.Null
+        // 0 index = default = Entity.Null
         private int nextEntityID = 1;
 
         private World()

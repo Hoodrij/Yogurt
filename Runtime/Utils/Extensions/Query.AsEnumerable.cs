@@ -1,18 +1,15 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Yogurt
 {
     public static partial class QueryEx
     {
-        public static IEnumerable<Entity> AsEnumerable(this QueryOfEntity query)
+        public static EntitiesEnumerator AsEnumerable(this QueryOfEntity query)
         {
-            return query.GetGroup().AsEnumerable();
+            return query.GetGroup().GetEntities();
         }
-        
-        public static IEnumerable<TAspect> AsEnumerable<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect
+
+        public static AspectsEnumerator<TAspect> AsEnumerable<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect
         {
-            return query.GetGroup().AsEnumerable().Select(entity => entity.As<TAspect>());
+            return query.GetGroup().GetAspects<TAspect>();
         }
     }
 }
