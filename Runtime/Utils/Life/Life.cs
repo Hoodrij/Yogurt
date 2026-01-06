@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
@@ -9,6 +10,7 @@ using UnityEngine.Pool;
 namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
+    [AsyncMethodBuilder(typeof(AsyncLifeMethodBuilder))]
 #if CSHARP_10
     public readonly record struct Life() : IDisposable
 #else
