@@ -88,7 +88,7 @@ namespace Yogurt
 
         public static bool IsAlive([CanBeNull] Life life)
         {
-#if CSHARP_10_OR_NEWER
+#if CSHARP_10
             return activeLifetimes.Contains(life.Id);
 #else
             return life is not null && activeLifetimes.Contains(life.Id);
