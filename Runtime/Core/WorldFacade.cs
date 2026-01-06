@@ -32,5 +32,26 @@ namespace Yogurt
             World.Entities.Remove(entity);
             World.ReleasedEntities.Enqueue(entity);
         }
+
+        public static Life GetLife(Entity entity)
+        {
+            Dictionary<Entity, Life> lifes = World.Lifes;
+            if (lifes.TryGetValue(entity, out Life life))
+            {
+                return life;
+            }
+            
+            life = new Life();
+            lifes.Add(entity, life);
+            return life;
+        }
+
+        public static void KillLife(Entity entity)
+        {
+            if (World.Lifes.Remove(entity, out Life life))
+            {
+                life.Kill();
+            }
+        }
     }
 }

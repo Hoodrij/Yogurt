@@ -4,10 +4,11 @@ namespace Yogurt
 {
     internal unsafe class World
     {
-        internal PostProcessor PostProcessor = new();
-        internal UnsafeSpan<EntityMeta> EntitiesMetas = new(Consts.INITIAL_ENTITIES_COUNT);
-        internal HashSet<Entity> Entities = new(Consts.INITIAL_ENTITIES_COUNT);
-        internal Queue<Entity> ReleasedEntities = new(Consts.INITIAL_ENTITIES_COUNT);
+        public PostProcessor PostProcessor = new();
+        public UnsafeSpan<EntityMeta> EntitiesMetas = new(Consts.INITIAL_ENTITIES_COUNT);
+        public HashSet<Entity> Entities = new(Consts.INITIAL_ENTITIES_COUNT);
+        public Queue<Entity> ReleasedEntities = new(Consts.INITIAL_ENTITIES_COUNT);
+        public Dictionary<Entity, Life> Lifes = new(Consts.INITIAL_ENTITIES_COUNT);
         
         // 0 index = default = Entity.Null
         private int nextEntityID = 1;
@@ -21,7 +22,7 @@ namespace Yogurt
 #endif
         }
 
-        internal static Entity CreateEntity()
+        public static Entity CreateEntity()
         {
             World world = WorldFacade.World ??= new World();
             

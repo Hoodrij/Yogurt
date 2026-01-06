@@ -10,7 +10,7 @@ namespace Yogurt
             public ComponentID ComponentId;
             public Action Action;
         }
-        internal enum Action : byte
+        public enum Action : byte
         {
             ComponentsChanged,
             Kill,
@@ -18,7 +18,7 @@ namespace Yogurt
         
         private Queue<EntityOperation> operations = new();
 
-        internal void Enqueue(Action action, Entity entity, ComponentID componentId = default)
+        public void Enqueue(Action action, Entity entity, ComponentID componentId = default)
         {
             operations.Enqueue(new EntityOperation
             {
@@ -28,9 +28,9 @@ namespace Yogurt
             });
         }
 
-        internal void Clear() => operations.Clear();
+        public void Clear() => operations.Clear();
 
-        internal unsafe void Update()
+        public unsafe void Update()
         {
             while (operations.Count > 0)
             {

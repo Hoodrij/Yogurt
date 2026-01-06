@@ -18,5 +18,8 @@
   "author": {
     "name": "Hoodrij",
     "email": "Hoodrij@gmail.com"
+  },
+  "dependencies": {
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
   }
 }

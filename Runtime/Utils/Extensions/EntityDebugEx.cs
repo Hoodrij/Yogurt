@@ -25,7 +25,7 @@ namespace Yogurt
 
         private static bool DebugCheckNull(this Entity entity)
         {
-#if UNITY_EDITOR && YOGURT_DEBUG
+#if YOGURT_DEBUG
             if (entity == Entity.Null)
             {
                 UnityEngine.Debug.LogError($"Entity is Null");
@@ -37,7 +37,7 @@ namespace Yogurt
 
         internal static void DebugCheckAlive(this Entity entity)
         {
-#if UNITY_EDITOR && YOGURT_DEBUG
+#if YOGURT_DEBUG
             if (DebugCheckNull(entity)) return;
             if (!entity.Exist)
             {
@@ -48,7 +48,7 @@ namespace Yogurt
 
         internal static unsafe void DebugNoComponent<T>(this Entity entity) where T : IComponent
         {
-#if UNITY_EDITOR && YOGURT_DEBUG
+#if YOGURT_DEBUG
             bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID.Of<T>());
             if (!entityHasComponent)
             {
@@ -59,7 +59,7 @@ namespace Yogurt
 
         internal static unsafe void DebugAlreadyHave<T>(this Entity entity) where T : IComponent
         {
-#if UNITY_EDITOR && YOGURT_DEBUG
+#if YOGURT_DEBUG
             bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID.Of<T>());
             if (entityHasComponent)
             {
@@ -70,7 +70,7 @@ namespace Yogurt
         
         internal static void DebugParentToSelf(this Entity entity, Entity parent)
         {
-#if UNITY_EDITOR && YOGURT_DEBUG
+#if YOGURT_DEBUG
             if (entity == parent)
             {
                 UnityEngine.Debug.LogError($"{entity} trying parent self");

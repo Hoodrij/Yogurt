@@ -68,6 +68,7 @@
                 return;
 
             WorldFacade.Enqueue(PostProcessor.Action.Kill, this);
+            WorldFacade.KillLife(this);
             
             EntityMeta* meta = Meta;
             meta->IsAlive = false;
