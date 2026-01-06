@@ -137,23 +137,31 @@ namespace Yogurt
 
         public readonly bool Equals(Mask other)
         {
-            for (int i = 0; i < Consts.MASK_ULONGS; i++)
-            {
-                if (bits[i] != other.bits[i])
-                    return false;
-            }
-
-            return true;
+            return bits[0] == other.bits[0]
+                && bits[1] == other.bits[1]
+                && bits[2] == other.bits[2]
+                && bits[3] == other.bits[3];
         }
 
         public readonly override int GetHashCode()
         {
-            int hash = (int)bits[0];
-            for (int i = 1; i < Consts.MASK_ULONGS; i++)
+            // FNV-1a hash for better distribution
+            unchecked
             {
-                hash ^= (int)(bits[i] ^ (bits[i] >> 32));
+                const uint FNV_prime = 16777619;
+                uint hash = 2166136261;
+                
+                hash = (hash ^ (uint)bits[0]) * FNV_prime;
+                hash = (hash ^ (uint)(bits[0] >> 32)) * FNV_prime;
+                hash = (hash ^ (uint)bits[1]) * FNV_prime;
+                hash = (hash ^ (uint)(bits[1] >> 32)) * FNV_prime;
+                hash = (hash ^ (uint)bits[2]) * FNV_prime;
+                hash = (hash ^ (uint)(bits[2] >> 32)) * FNV_prime;
+                hash = (hash ^ (uint)bits[3]) * FNV_prime;
+                hash = (hash ^ (uint)(bits[3] >> 32)) * FNV_prime;
+                
+                return (int)hash;
             }
-            return hash;
         }
 
         private readonly string Name

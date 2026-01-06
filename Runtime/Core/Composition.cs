@@ -14,7 +14,13 @@ namespace Yogurt
         {
             this.included = included;
             this.excluded = excluded;
-            Hash = HashCode.Combine(included, excluded);
+            
+            unchecked
+            {
+                int hash = included.GetHashCode();
+                hash = (hash * 397) ^ excluded.GetHashCode();
+                Hash = hash;
+            }
         }
         
         internal unsafe bool Fits(EntityMeta* meta)
@@ -35,7 +41,8 @@ namespace Yogurt
 
         public bool Equals(Composition other)
         {
-            return included.Equals(other.included)
+            return Hash == other.Hash 
+                && included.Equals(other.included)
                 && excluded.Equals(other.excluded);
         }
 
