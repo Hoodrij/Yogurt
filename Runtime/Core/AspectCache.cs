@@ -36,7 +36,8 @@ namespace Yogurt
 
                 if (propertyType.GetInterface(nameof(IAspect)) != null)
                 {
-                    mask &= GenerateMask(propertyType);
+                    Mask nestedMask = GenerateMask(propertyType);
+                    mask.And(nestedMask);
                 }
             }
 

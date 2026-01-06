@@ -80,7 +80,7 @@ namespace Yogurt
             Mask result = default;
             for (int i = 0; i < Consts.MASK_ULONGS; i++)
             {
-                result.bits[i] = bits[i] & other.bits[i];
+                result.bits[i] = bits[i] | other.bits[i];
             }
 
             return result;
@@ -112,11 +112,6 @@ namespace Yogurt
                 count++;
             }
             return count;
-        }
-
-        public static Mask operator & (Mask mask, Mask other)
-        {
-            return mask.And(other);
         }
 
         public override string ToString()
