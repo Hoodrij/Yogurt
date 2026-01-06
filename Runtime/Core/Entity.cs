@@ -45,8 +45,8 @@ namespace Yogurt
         public static bool operator !=(Entity entity1, Entity entity2) => !(entity1 == entity2);
 
         void IUnmanaged<Entity>.Initialize() => this = default;
-        void IDisposable.Dispose() => Kill();
-
+        void IDisposable.Dispose() { }
+        
         private string Name
         {
             get
