@@ -64,6 +64,7 @@ namespace Yogurt
             Entities.Clear();
             ReleasedEntities.Clear();
             PostProcessor.Clear();
+            Lifes.Clear();
 
             foreach (Group group in Group.Cache.Values)
             {
