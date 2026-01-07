@@ -55,6 +55,7 @@ namespace AspectSourceGenerator
                                           {access} static void Set<TComponent>(this {fullname} aspect, TComponent component)  where TComponent : IComponent => aspect.Entity.Set(component);
                                           {access} static bool Has<TComponent>(this {fullname} aspect)  where TComponent : IComponent => aspect.Entity.Has<TComponent>();
                                           {access} static void Remove<TComponent>(this {fullname} aspect)  where TComponent : IComponent => aspect.Entity.Remove<TComponent>();
+                                          {access} static TOther As<TOther>(this {fullname} aspect) where TOther : struct, IAspect => aspect.Entity.As<TOther>();
                                       
                                   """);
                 }
