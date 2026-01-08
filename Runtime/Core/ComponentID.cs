@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Yogurt.Utils;
 
 namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
     internal readonly struct ComponentID : IEquatable<ComponentID>
     {
-        private static Dictionary<Type, ComponentID> componentsIds = new(Consts.MAX_COMPONENTS);
+        private static Dictionary<Type, ComponentID> componentsIds = new(Consts.MAX_COMPONENTS, comparer: TypeEqualityComparer.Instance);
 
         private readonly ushort ID;
 
