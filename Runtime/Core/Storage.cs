@@ -20,7 +20,7 @@ namespace Yogurt
             {
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.IsGenericType || !type.GetInterfaces().Contains(typeof(IComponent)))
+                    if (type.IsGenericType || !typeof(IComponent).IsAssignableFrom(type))
                         continue;
 
                     Type genericStorage = typeof(Storage<>).MakeGenericType(type);
@@ -35,9 +35,9 @@ namespace Yogurt
             return All[componentId];
         }
         
-        public static Storage<T> Of<T>() where T : IComponent
+        public static Storage<T> Of<T>(ComponentID componentId) where T : IComponent
         {
-            return (Storage<T>) Of(ComponentID.Of<T>());
+            return (Storage<T>) Of(componentId);
         }
     }
 

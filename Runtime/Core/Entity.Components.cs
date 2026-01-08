@@ -16,7 +16,7 @@
             
             ComponentID componentID = ComponentID.Of<T>();
             Meta->ComponentsMask.Set(componentID);
-            Storage.Of<T>().Set(component, this);
+            Storage.Of<T>(componentID).Set(component, this);
             WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
 
             return this;
@@ -27,7 +27,7 @@
             this.DebugCheckAlive();
             this.DebugNoComponent<T>();
 
-            return ref Storage.Of<T>().Get(this);
+            return ref Storage.Of<T>(ComponentID.Of<T>()).Get(this);
         }
         
         public bool TryGet<T>(out T t) where T : IComponent
@@ -36,7 +36,7 @@
             t = default;
             if (has)
             {
-                t = Storage.Of<T>().Get(this);
+                t = Storage.Of<T>(ComponentID.Of<T>()).Get(this);
             }
 
             return has;
