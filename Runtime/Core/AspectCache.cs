@@ -29,6 +29,10 @@ namespace Yogurt
             foreach (PropertyInfo field in aspectType.GetProperties())
             {
                 Type propertyType = field.PropertyType;
+                if (propertyType.IsByRef)
+                {
+                    propertyType = propertyType.GetElementType();
+                }
                 if (propertyType.GetInterface(nameof(IComponent)) != null)
                 {
                     mask.Set(ComponentID.Of(propertyType));
