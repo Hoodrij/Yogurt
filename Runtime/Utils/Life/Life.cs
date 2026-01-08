@@ -29,8 +29,8 @@ namespace Yogurt
         public static implicit operator CancellationToken(Life life) => LifePool.GetToken(life);
         public static implicit operator Life(CancellationToken token) => token.AsLife();
         public static implicit operator bool(Life life) => life.IsAlive();
-        public static Life operator &(Life a, Life b) => a.And(b);
-        public static Life operator |(Life a, Life b) => a.Or(b);
+        public static Life operator & (Life a, Life b) => a.And(b);
+        public static Life operator | (Life a, Life b) => a.Or(b);
     }
 
     public static class LifeAPI
@@ -63,7 +63,7 @@ namespace Yogurt
         
             static async UniTask KillWithParent(Life life, UniTask parent)
             {
-                await parent;
+                await parent.SuppressCancellationThrow();
                 life.Kill();
             }
         }
