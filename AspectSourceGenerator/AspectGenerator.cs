@@ -49,12 +49,12 @@ namespace AspectSourceGenerator
                     string access = GetAccessibilityString(t!);
                     sb.AppendLine($"""
                                           // {fullname}
-                                          {access} static TComponent Get<TComponent>(this {fullname} aspect)  where TComponent : IComponent => aspect.Entity.Get<TComponent>();
-                                          {access} static bool TryGet<TComponent>(this {fullname} aspect, out TComponent component)  where TComponent : IComponent => aspect.Entity.TryGet(out component);
-                                          {access} static void Add<TComponent>(this {fullname} aspect, TComponent component)  where TComponent : IComponent => aspect.Entity.Set(component);
-                                          {access} static void Set<TComponent>(this {fullname} aspect, TComponent component)  where TComponent : IComponent => aspect.Entity.Set(component);
-                                          {access} static bool Has<TComponent>(this {fullname} aspect)  where TComponent : IComponent => aspect.Entity.Has<TComponent>();
-                                          {access} static void Remove<TComponent>(this {fullname} aspect)  where TComponent : IComponent => aspect.Entity.Remove<TComponent>();
+                                          {access} static ref TComponent Get<TComponent>(this {fullname} aspect) where TComponent : IComponent => ref aspect.Entity.Get<TComponent>();
+                                          {access} static bool TryGet<TComponent>(this {fullname} aspect, out TComponent component) where TComponent : IComponent => aspect.Entity.TryGet(out component);
+                                          {access} static void Add<TComponent>(this {fullname} aspect, TComponent component) where TComponent : IComponent => aspect.Entity.Set(component);
+                                          {access} static void Set<TComponent>(this {fullname} aspect, TComponent component) where TComponent : IComponent => aspect.Entity.Set(component);
+                                          {access} static bool Has<TComponent>(this {fullname} aspect) where TComponent : IComponent => aspect.Entity.Has<TComponent>();
+                                          {access} static void Remove<TComponent>(this {fullname} aspect) where TComponent : IComponent => aspect.Entity.Remove<TComponent>();
                                           {access} static TOther As<TOther>(this {fullname} aspect) where TOther : struct, IAspect => aspect.Entity.As<TOther>();
                                       
                                   """);
