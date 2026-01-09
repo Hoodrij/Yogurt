@@ -17,9 +17,9 @@ namespace Yogurt
             return new QueryOfEntity().With<TComponent>();
         }
 
-        static TComponent Single<TComponent>() where TComponent : IComponent
+        static ref TComponent Single<TComponent>() where TComponent : IComponent
         {
-            return Of<TComponent>().Single().Get<TComponent>();
+            return ref Of<TComponent>().Single().Get<TComponent>();
         }
 
         static QueryOfAspect<TAspect> Of<TAspect>(Void _ = default) where TAspect : struct, IAspect
