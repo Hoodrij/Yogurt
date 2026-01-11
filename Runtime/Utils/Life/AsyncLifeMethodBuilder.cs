@@ -14,11 +14,11 @@ namespace Yogurt
         private AsyncLifeMethodBuilder(AsyncUniTaskMethodBuilder target)
         {
             this.target = target;
+            Task = new Life().SetParent(target.Task);
         }
-        
+
         [DebuggerHidden]
-        public Life Task 
-            => target.Task;
+        public Life Task { get; }
 
         public static AsyncLifeMethodBuilder Create() 
             => new (AsyncUniTaskMethodBuilder.Create());
