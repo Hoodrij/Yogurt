@@ -11,6 +11,7 @@ namespace Yogurt
         private static readonly HashSet<int> activeLifes = new(capacity: 31);
         private static readonly Dictionary<int, CancellationTokenSource> tokenSources = new(capacity: 31);
         private static readonly Dictionary<int, List<AutoResetUniTaskCompletionSource>> completionSources = new(capacity: 31);
+        private static readonly CancellationToken canceledToken = new CancellationToken(canceled: true);
         private static int nextId = 1;
     
         public static int Pop()
@@ -65,15 +66,15 @@ namespace Yogurt
         
             static async UniTask KillWithParent(Life life, UniTask parent)
             {
-                await parent.SuppressCancellationThrow();
-                life.Kill();
+                try { await parent.SuppressCancellationThrow(); }
+                finally { life.Kill(); }
             }
         }
 
         public static CancellationToken GetToken(Life life)
         {
             if (life.IsDead())
-                return CancellationToken.None;
+                return canceledToken;
             
             if (tokenSources.TryGetValue(life.Id, out CancellationTokenSource cts))
                 return cts.Token;
