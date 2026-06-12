@@ -29,6 +29,8 @@ namespace Yogurt
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsAlive(EntityMeta* meta)
         {
+            if (this == Null)
+                return false;
             return meta->IsAlive && meta->Age == Age;
         }
 
