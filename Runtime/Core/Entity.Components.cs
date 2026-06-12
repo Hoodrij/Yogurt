@@ -35,10 +35,6 @@
             this.DebugCheckAlive();
             this.DebugNoComponent<T>();
 
-            EntityMeta* meta = Meta;
-            if (!IsAlive(meta))
-                throw new System.InvalidOperationException($"Get<{typeof(T).Name}>() called on a dead or Null entity (ID {ID}, Age {Age}).");
-
             return ref Storage<T>.Instance.Get(this);
         }
 
