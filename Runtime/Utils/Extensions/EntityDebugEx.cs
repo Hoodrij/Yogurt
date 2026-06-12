@@ -49,7 +49,7 @@ namespace Yogurt
         internal static unsafe void DebugNoComponent<T>(this Entity entity) where T : IComponent
         {
 #if YOGURT_DEBUG
-            bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID.Of<T>());
+            bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID<T>.Value);
             if (!entityHasComponent)
             {
                 UnityEngine.Debug.LogError($"{entity} does not have [{typeof(T).Name}]");
@@ -60,7 +60,7 @@ namespace Yogurt
         internal static unsafe void DebugAlreadyHave<T>(this Entity entity) where T : IComponent
         {
 #if YOGURT_DEBUG
-            bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID.Of<T>());
+            bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID<T>.Value);
             if (entityHasComponent)
             {
                 UnityEngine.Debug.LogError($"{entity} already have [{typeof(T).Name}]");
