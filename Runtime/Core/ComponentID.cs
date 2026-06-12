@@ -35,8 +35,6 @@ namespace Yogurt
             return componentId;
         }
 
-        public static ComponentID Of<T>() where T : IComponent => Of(typeof(T));
-
         public static implicit operator ushort(ComponentID id)
         {
             return id.ID;
@@ -74,5 +72,10 @@ namespace Yogurt
         {
             return ID.GetHashCode();
         }
+    }
+
+    internal static class ComponentID<T> where T : IComponent
+    {
+        public static readonly ComponentID Value = ComponentID.Of(typeof(T));
     }
 }

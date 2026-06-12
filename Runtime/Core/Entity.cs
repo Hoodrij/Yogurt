@@ -17,8 +17,8 @@ namespace Yogurt
         {
             get
             {
-#if UNITY_2019_1_OR_NEWER
-                if (!UnityEngine.Application.isPlaying) 
+#if UNITY_EDITOR
+                if (!UnityEngine.Application.isPlaying)
                     return false;
 #endif
                 return IsAliveFast;

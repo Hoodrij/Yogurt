@@ -16,10 +16,14 @@
             if (!IsAliveFast)
                 return this;
 
-            ComponentID componentID = ComponentID.Of<T>();
-            Meta->ComponentsMask.Set(componentID);
-            Storage.Of<T>(componentID).Set(component, this);
-            WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
+            ComponentID componentID = ComponentID<T>.Value;
+            Storage<T>.Instance.Set(component, this);
+
+            if (!Meta->ComponentsMask.Has(componentID))
+            {
+                Meta->ComponentsMask.Set(componentID);
+                WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
+            }
 
             return this;
         }
@@ -31,7 +35,7 @@
             if (!IsAliveFast)
                 throw new System.InvalidOperationException($"Get<{typeof(T).Name}>() called on a dead or Null entity (ID {ID}, Age {Age}).");
 
-            return ref Storage.Of<T>(ComponentID.Of<T>()).Get(this);
+            return ref Storage<T>.Instance.Get(this);
         }
 
         public bool TryGet<T>(out T t) where T : IComponent
@@ -40,7 +44,7 @@
             t = default;
             if (has)
             {
-                t = Storage.Of<T>(ComponentID.Of<T>()).Get(this);
+                t = Storage<T>.Instance.Get(this);
             }
 
             return has;
@@ -52,7 +56,7 @@
             if (!IsAliveFast)
                 return false;
 
-            return Meta->ComponentsMask.Has(ComponentID.Of<T>());
+            return Meta->ComponentsMask.Has(ComponentID<T>.Value);
         }
 
         public void Remove<T>() where T : IComponent
@@ -61,9 +65,9 @@
             if (!IsAliveFast)
                 return;
 
-            ComponentID componentID = ComponentID.Of<T>();
+            ComponentID componentID = ComponentID<T>.Value;
             Meta->ComponentsMask.UnSet(componentID);
-            Storage.Of<T>(componentID).Clear(this);
+            Storage<T>.Instance.ClearEntity(this);
 
             if (Meta->ComponentsMask.IsEmpty)
                 Kill();

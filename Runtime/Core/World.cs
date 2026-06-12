@@ -71,7 +71,8 @@ namespace Yogurt
                 group.Dispose();
             }
             Group.Cache.Clear();
-            
+
+            Storage.ResetAll();
             EntitiesMetas.Dispose();
             AspectCache.Clear();
         }

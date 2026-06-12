@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace Yogurt
@@ -12,10 +11,17 @@ namespace Yogurt
         public Stack<Group> Groups = new();
 
         public abstract IComponent GetBoxed(Entity entity);
-        public abstract void Clear(Entity entity);
+        public abstract void ClearEntity(Entity entity);
+        protected abstract void Reset();
 
         public static void Initialize()
         {
+            if (All != null)
+            {
+                ResetAll();
+                return;
+            }
+
             All = new Storage[Consts.MAX_COMPONENTS];
 
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -32,28 +38,40 @@ namespace Yogurt
             }
         }
 
-        public static Storage Of(ComponentID componentId)
+        public static void ResetAll()
         {
-            return All[componentId];
+            if (All == null)
+                return;
+
+            foreach (Storage storage in All)
+            {
+                storage?.Reset();
+            }
         }
-        
-        public static Storage<T> Of<T>(ComponentID componentId) where T : IComponent
-        {
-            return (Storage<T>) Of(componentId);
-        }
+
+        public static Storage Of(ComponentID componentId) => All[componentId];
     }
 
     internal class Storage<T> : Storage where T : IComponent
     {
+        private static Storage<T> instance;
+        public static Storage<T> Instance => instance ??= (Storage<T>)Of(ComponentID<T>.Value);
+
         private T[] components = new T[Consts.INITIAL_ENTITIES_COUNT];
         public override IComponent GetBoxed(Entity entity) => components[entity];
 
-        public override void Clear(Entity entity)
+        public override void ClearEntity(Entity entity)
         {
             if (entity < components.Length)
             {
                 components[entity] = default;
             }
+        }
+
+        protected override void Reset()
+        {
+            Groups.Clear();
+            Array.Clear(components, 0, components.Length);
         }
         
         public void Set(T component, Entity entity)

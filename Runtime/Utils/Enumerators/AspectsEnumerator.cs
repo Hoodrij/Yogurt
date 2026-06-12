@@ -1,17 +1,14 @@
-using System.Collections.Generic;
-
 namespace Yogurt
 {
     public struct AspectsEnumerator<TAspect> where TAspect : struct, IAspect
     {
-        public int Count { get; }
-        
-        private HashSet<Entity>.Enumerator enumerator;
+        private EntityEnumerator enumerator;
 
-        public AspectsEnumerator(HashSet<Entity> entities)
+        public int Count => enumerator.Count;
+
+        internal AspectsEnumerator(EntityEnumerator entities)
         {
-            Count = entities.Count;
-            enumerator = entities.GetEnumerator();
+            enumerator = entities;
         }
 
         public TAspect Current => enumerator.Current.As<TAspect>();

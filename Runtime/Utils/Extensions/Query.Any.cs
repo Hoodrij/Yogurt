@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -7,7 +6,7 @@ namespace Yogurt
     {
         public static bool Any(this QueryOfEntity query, Func<Entity, bool> predicate)
         {
-            using HashSet<Entity>.Enumerator enumerator = query.GetEnumerator();
+            EntityEnumerator enumerator = query.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 if (predicate(enumerator.Current))
@@ -15,13 +14,12 @@ namespace Yogurt
             }
             return false;
         }
-        
+
         public static bool Any(this QueryOfEntity query)
         {
-            using HashSet<Entity>.Enumerator enumerator = query.GetEnumerator();
-            return enumerator.MoveNext();
+            return query.GetEnumerator().Count > 0;
         }
-        
+
         public static bool Any<TAspect>(this QueryOfAspect<TAspect> query, Func<TAspect, bool> predicate) where TAspect : struct, IAspect
         {
             AspectsEnumerator<TAspect> enumerator = query.GetEnumerator();
@@ -32,10 +30,10 @@ namespace Yogurt
             }
             return false;
         }
-        
+
         public static bool Any<TAspect>(this QueryOfAspect<TAspect> query) where TAspect : struct, IAspect
         {
-            return query.GetEnumerator().MoveNext();
+            return query.GetEnumerator().Count > 0;
         }
     }
 }

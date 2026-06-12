@@ -106,11 +106,12 @@ namespace Yogurt
         {
             if (value == 0) return 64;
             int count = 0;
-            while ((value & 1) == 0)
-            {
-                value >>= 1;
-                count++;
-            }
+            if ((value & 0xFFFFFFFFUL) == 0) { value >>= 32; count += 32; }
+            if ((value & 0xFFFFUL) == 0) { value >>= 16; count += 16; }
+            if ((value & 0xFFUL) == 0) { value >>= 8; count += 8; }
+            if ((value & 0xFUL) == 0) { value >>= 4; count += 4; }
+            if ((value & 0x3UL) == 0) { value >>= 2; count += 2; }
+            if ((value & 0x1UL) == 0) { count += 1; }
             return count;
         }
 

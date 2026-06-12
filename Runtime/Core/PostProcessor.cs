@@ -61,7 +61,7 @@ namespace Yogurt
                             int componentsCount = meta->ComponentsMask.GetIDs(componentsBuffer);
                             for (int i = 0; i < componentsCount; i++)
                             {
-                                Storage.Of(componentsBuffer[i]).Clear(entity);
+                                Storage.Of(componentsBuffer[i]).ClearEntity(entity);
                             }
 
                             for (int i = 0; i < meta->Groups.Count; i++)

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Yogurt
+﻿namespace Yogurt
 {
     /// <summary>
     /// QueryOfEntity query = Query.Of Player>();
@@ -40,13 +38,13 @@ namespace Yogurt
 
         public QueryOfEntity With<TComponent>() where TComponent : IComponent
         {
-            Included.Set(ComponentID.Of<TComponent>());
+            Included.Set(ComponentID<TComponent>.Value);
             return this;
         }
-        
+
         public QueryOfEntity Without<TComponent>() where TComponent : IComponent
         {
-            Excluded.Set(ComponentID.Of<TComponent>());
+            Excluded.Set(ComponentID<TComponent>.Value);
             return this;
         }
 
@@ -57,7 +55,7 @@ namespace Yogurt
             return group;
         }
 
-        public readonly HashSet<Entity>.Enumerator GetEnumerator() => GetGroup().GetEntities();
+        public readonly EntityEnumerator GetEnumerator() => GetGroup().GetEntities();
         public readonly Entity Single() => GetGroup().Single();
     }
     
@@ -68,13 +66,13 @@ namespace Yogurt
         
         public QueryOfAspect<TAspect> With<TComponent>() where TComponent : IComponent
         {
-            Included.Set(ComponentID.Of<TComponent>());
+            Included.Set(ComponentID<TComponent>.Value);
             return this;
         }
-        
+
         public QueryOfAspect<TAspect> Without<TComponent>() where TComponent : IComponent
         {
-            Excluded.Set(ComponentID.Of<TComponent>());
+            Excluded.Set(ComponentID<TComponent>.Value);
             return this;
         }
         
