@@ -9,7 +9,6 @@ namespace Yogurt
 
         public PostProcessor PostProcessor = new();
         public UnsafeSpan<EntityMeta> EntitiesMetas = new(Consts.INITIAL_ENTITIES_COUNT);
-        public HashSet<Entity> Entities = new(Consts.INITIAL_ENTITIES_COUNT, comparer: EntityEqualityComparer.Instance);
         public Queue<Entity> ReleasedEntities = new(Consts.INITIAL_ENTITIES_COUNT);
         public Dictionary<Entity, Life> Lifes = new(Consts.INITIAL_ENTITIES_COUNT, comparer: EntityEqualityComparer.Instance);
         
@@ -52,8 +51,6 @@ namespace Yogurt
             meta->IsAlive = true;
             meta->ComponentsMask.Clear();
 
-            world.Entities.Add(entity);
-
             return entity;
         }
 
@@ -64,7 +61,6 @@ namespace Yogurt
             UnityEngine.Application.quitting -= Dispose;
 #endif
 
-            Entities.Clear();
             ReleasedEntities.Clear();
             PostProcessor.Clear();
             Lifes.Clear();

@@ -16,10 +16,21 @@ namespace Yogurt
             World.PostProcessor.Update();
         }
 
-        public static HashSet<Entity> GetEntities()
+        public static AliveEntitiesEnumerator GetEntities()
         {
             UpdateWorld();
-            return World.Entities;
+            return new AliveEntitiesEnumerator(World);
+        }
+
+        public static List<Entity> CollectAliveEntities()
+        {
+            List<Entity> result = new();
+            foreach (Entity entity in GetEntities())
+            {
+                result.Add(entity);
+            }
+
+            return result;
         }
 
         public static unsafe EntityMeta* GetMeta(Entity entity)
@@ -29,7 +40,6 @@ namespace Yogurt
 
         public static void RemoveEntity(Entity entity)
         {
-            World.Entities.Remove(entity);
             World.ReleasedEntities.Enqueue(entity);
         }
 
