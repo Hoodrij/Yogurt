@@ -17,7 +17,7 @@ namespace Yogurt
             {
                 ComponentID componentId = buffer[i];
                 Storage storage = Storage.Of(componentId);
-                result.Add(storage.ComponentsArray[entity]);
+                result.Add(storage.GetBoxed(entity));
             }
 
             return result;

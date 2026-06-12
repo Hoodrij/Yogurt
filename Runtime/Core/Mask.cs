@@ -75,7 +75,7 @@ namespace Yogurt
             }
         }
 
-        public readonly Mask And(Mask other)
+        public readonly Mask Or(Mask other)
         {
             Mask result = default;
             for (int i = 0; i < Consts.MASK_ULONGS; i++)
@@ -132,10 +132,13 @@ namespace Yogurt
 
         public readonly bool Equals(Mask other)
         {
-            return bits[0] == other.bits[0]
-                && bits[1] == other.bits[1]
-                && bits[2] == other.bits[2]
-                && bits[3] == other.bits[3];
+            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            {
+                if (bits[i] != other.bits[i])
+                    return false;
+            }
+
+            return true;
         }
 
         public readonly override int GetHashCode()
@@ -145,16 +148,13 @@ namespace Yogurt
             {
                 const uint FNV_prime = 16777619;
                 uint hash = 2166136261;
-                
-                hash = (hash ^ (uint)bits[0]) * FNV_prime;
-                hash = (hash ^ (uint)(bits[0] >> 32)) * FNV_prime;
-                hash = (hash ^ (uint)bits[1]) * FNV_prime;
-                hash = (hash ^ (uint)(bits[1] >> 32)) * FNV_prime;
-                hash = (hash ^ (uint)bits[2]) * FNV_prime;
-                hash = (hash ^ (uint)(bits[2] >> 32)) * FNV_prime;
-                hash = (hash ^ (uint)bits[3]) * FNV_prime;
-                hash = (hash ^ (uint)(bits[3] >> 32)) * FNV_prime;
-                
+
+                for (int i = 0; i < Consts.MASK_ULONGS; i++)
+                {
+                    hash = (hash ^ (uint)bits[i]) * FNV_prime;
+                    hash = (hash ^ (uint)(bits[i] >> 32)) * FNV_prime;
+                }
+
                 return (int)hash;
             }
         }

@@ -32,6 +32,8 @@ namespace Yogurt
 
         public unsafe void Update()
         {
+            System.Span<ComponentID> componentsBuffer = stackalloc ComponentID[Consts.MAX_COMPONENTS];
+
             while (operations.Count > 0)
             {
                 EntityOperation operation = operations.Dequeue();
@@ -55,7 +57,13 @@ namespace Yogurt
                     case Action.Kill:
                         {
                             EntityMeta* meta = entity.Meta;
-                            
+
+                            int componentsCount = meta->ComponentsMask.GetIDs(componentsBuffer);
+                            for (int i = 0; i < componentsCount; i++)
+                            {
+                                Storage.Of(componentsBuffer[i]).Clear(entity);
+                            }
+
                             for (int i = 0; i < meta->Groups.Count; i++)
                             {
                                 Group.Cache.TryGetValue(*meta->Groups[i], out Group group);

@@ -10,7 +10,9 @@ namespace Yogurt
         private static Storage[] All;
 
         public Stack<Group> Groups = new();
-        public abstract IComponent[] ComponentsArray { get; }
+
+        public abstract IComponent GetBoxed(Entity entity);
+        public abstract void Clear(Entity entity);
 
         public static void Initialize()
         {
@@ -44,7 +46,15 @@ namespace Yogurt
     internal class Storage<T> : Storage where T : IComponent
     {
         private T[] components = new T[Consts.INITIAL_ENTITIES_COUNT];
-        public override IComponent[] ComponentsArray => components as IComponent[];
+        public override IComponent GetBoxed(Entity entity) => components[entity];
+
+        public override void Clear(Entity entity)
+        {
+            if (entity < components.Length)
+            {
+                components[entity] = default;
+            }
+        }
         
         public void Set(T component, Entity entity)
         {

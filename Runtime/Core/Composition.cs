@@ -31,7 +31,7 @@ namespace Yogurt
         
         public int GetIds(Span<ComponentID> buffer)
         {
-            return included.And(excluded).GetIDs(buffer);
+            return included.Or(excluded).GetIDs(buffer);
         }
 
         public override int GetHashCode()

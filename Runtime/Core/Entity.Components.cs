@@ -13,7 +13,9 @@
         public Entity Set<T>(T component) where T : IComponent
         {
             this.DebugCheckAlive();
-            
+            if (!IsAliveFast)
+                return this;
+
             ComponentID componentID = ComponentID.Of<T>();
             Meta->ComponentsMask.Set(componentID);
             Storage.Of<T>(componentID).Set(component, this);
@@ -26,10 +28,12 @@
         {
             this.DebugCheckAlive();
             this.DebugNoComponent<T>();
+            if (!IsAliveFast)
+                throw new System.InvalidOperationException($"Get<{typeof(T).Name}>() called on a dead or Null entity (ID {ID}, Age {Age}).");
 
             return ref Storage.Of<T>(ComponentID.Of<T>()).Get(this);
         }
-        
+
         public bool TryGet<T>(out T t) where T : IComponent
         {
             bool has = Has<T>();
@@ -45,6 +49,8 @@
         public bool Has<T>() where T : IComponent
         {
             this.DebugCheckAlive();
+            if (!IsAliveFast)
+                return false;
 
             return Meta->ComponentsMask.Has(ComponentID.Of<T>());
         }
@@ -52,9 +58,12 @@
         public void Remove<T>() where T : IComponent
         {
             this.DebugNoComponent<T>();
+            if (!IsAliveFast)
+                return;
 
             ComponentID componentID = ComponentID.Of<T>();
             Meta->ComponentsMask.UnSet(componentID);
+            Storage.Of<T>(componentID).Clear(this);
 
             if (Meta->ComponentsMask.IsEmpty)
                 Kill();

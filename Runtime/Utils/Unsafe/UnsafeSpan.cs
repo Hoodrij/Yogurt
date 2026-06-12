@@ -20,7 +20,7 @@ namespace Yogurt
             memoryPointer = Marshal.AllocHGlobal(this.capacity * elementSize);
             Count = 0;
 
-            for (int i = 0; i < capacity; i++)
+            for (int i = 0; i < this.capacity; i++)
             {
                 GetUnsafe(i)->Initialize();
             }
@@ -32,10 +32,15 @@ namespace Yogurt
         {
             if (index >= capacity)
             {
-                capacity <<= 1;
+                int oldCapacity = capacity;
+                while (index >= capacity)
+                {
+                    capacity <<= 1;
+                }
+
                 memoryPointer = Marshal.ReAllocHGlobal(memoryPointer, (IntPtr)(capacity * elementSize));
-                
-                for (int i = capacity >> 1; i < capacity; i++)
+
+                for (int i = oldCapacity; i < capacity; i++)
                 {
                     GetUnsafe(i)->Initialize();
                 }
@@ -70,12 +75,12 @@ namespace Yogurt
             {
                 if (GetUnsafe(i)->Equals(value))
                 {
-                    for (int j = i; j < Count; ++j)
+                    for (int j = i; j < Count - 1; ++j)
                     {
                         T* next = GetUnsafe(j+1);
                         Set(j, *next);
                     }
-        
+
                     Count--;
                     break;
                 }

@@ -21,13 +21,21 @@ namespace Yogurt
                 if (!UnityEngine.Application.isPlaying) 
                     return false;
 #endif
-                if (this == Null) 
+                return IsAliveFast;
+            }
+        }
+        
+        private bool IsAliveFast
+        {
+            get
+            {
+                if (this == Null)
                     return false;
                 EntityMeta* meta = Meta;
                 return meta->IsAlive && meta->Age == Age;
             }
         }
-        
+
         internal EntityMeta* Meta => WorldFacade.GetMeta(this);
 
         public static Entity Create()

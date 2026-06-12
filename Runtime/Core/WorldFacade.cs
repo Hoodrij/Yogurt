@@ -35,12 +35,19 @@ namespace Yogurt
 
         public static Life GetLife(Entity entity)
         {
+            if (!entity.Exist)
+            {
+                Life deadLife = new Life();
+                deadLife.Kill();
+                return deadLife;
+            }
+
             Dictionary<Entity, Life> lifes = World.Lifes;
             if (lifes.TryGetValue(entity, out Life life))
             {
                 return life;
             }
-            
+
             life = new Life();
             lifes.Add(entity, life);
             return life;
