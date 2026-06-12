@@ -5,6 +5,8 @@ namespace Yogurt
 {
     internal unsafe class World
     {
+        internal static int Version { get; private set; }
+
         public PostProcessor PostProcessor = new();
         public UnsafeSpan<EntityMeta> EntitiesMetas = new(Consts.INITIAL_ENTITIES_COUNT);
         public HashSet<Entity> Entities = new(Consts.INITIAL_ENTITIES_COUNT, comparer: EntityEqualityComparer.Instance);
@@ -16,6 +18,7 @@ namespace Yogurt
 
         private World()
         {
+            Version++;
             Storage.Initialize();
 
 #if UNITY_2019_1_OR_NEWER
@@ -74,7 +77,6 @@ namespace Yogurt
 
             Storage.ResetAll();
             EntitiesMetas.Dispose();
-            AspectCache.Clear();
         }
     }
 }

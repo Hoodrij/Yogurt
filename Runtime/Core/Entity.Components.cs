@@ -5,7 +5,7 @@
         public Entity Add<T>(T component) where T : IComponent
         {
             this.DebugAlreadyHave<T>();
-            
+
             Set(component);
             return this;
         }
@@ -13,15 +13,17 @@
         public Entity Set<T>(T component) where T : IComponent
         {
             this.DebugCheckAlive();
-            if (!IsAliveFast)
+
+            EntityMeta* meta = Meta;
+            if (!IsAlive(meta))
                 return this;
 
-            ComponentID componentID = ComponentID<T>.Value;
             Storage<T>.Instance.Set(component, this);
 
-            if (!Meta->ComponentsMask.Has(componentID))
+            ComponentID componentID = ComponentID<T>.Value;
+            if (!meta->ComponentsMask.Has(componentID))
             {
-                Meta->ComponentsMask.Set(componentID);
+                meta->ComponentsMask.Set(componentID);
                 WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
             }
 
@@ -32,7 +34,9 @@
         {
             this.DebugCheckAlive();
             this.DebugNoComponent<T>();
-            if (!IsAliveFast)
+
+            EntityMeta* meta = Meta;
+            if (!IsAlive(meta))
                 throw new System.InvalidOperationException($"Get<{typeof(T).Name}>() called on a dead or Null entity (ID {ID}, Age {Age}).");
 
             return ref Storage<T>.Instance.Get(this);
@@ -53,23 +57,27 @@
         public bool Has<T>() where T : IComponent
         {
             this.DebugCheckAlive();
-            if (!IsAliveFast)
+
+            EntityMeta* meta = Meta;
+            if (!IsAlive(meta))
                 return false;
 
-            return Meta->ComponentsMask.Has(ComponentID<T>.Value);
+            return meta->ComponentsMask.Has(ComponentID<T>.Value);
         }
 
         public void Remove<T>() where T : IComponent
         {
             this.DebugNoComponent<T>();
-            if (!IsAliveFast)
+
+            EntityMeta* meta = Meta;
+            if (!IsAlive(meta))
                 return;
 
             ComponentID componentID = ComponentID<T>.Value;
-            Meta->ComponentsMask.UnSet(componentID);
+            meta->ComponentsMask.UnSet(componentID);
             Storage<T>.Instance.ClearEntity(this);
 
-            if (Meta->ComponentsMask.IsEmpty)
+            if (meta->ComponentsMask.IsEmpty)
                 Kill();
             else
                 WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
@@ -77,13 +85,17 @@
 
         public void Kill()
         {
-            if (!Exist)
+#if UNITY_EDITOR
+            if (!UnityEngine.Application.isPlaying)
+                return;
+#endif
+            EntityMeta* meta = Meta;
+            if (!IsAlive(meta))
                 return;
 
             WorldFacade.Enqueue(PostProcessor.Action.Kill, this);
             WorldFacade.KillLife(this);
-            
-            EntityMeta* meta = Meta;
+
             meta->IsAlive = false;
             while (meta->Childs.Count > 0)
             {

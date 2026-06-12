@@ -12,7 +12,7 @@
     {
         static QueryOfEntity Of<TComponent>() where TComponent : IComponent
         {
-            return new QueryOfEntity().With<TComponent>();
+            return GroupCache<TComponent>.Get();
         }
 
         static ref TComponent Single<TComponent>() where TComponent : IComponent
@@ -35,55 +35,67 @@
     {
         internal Mask Included;
         internal Mask Excluded;
+        internal Group CachedGroup;
+        internal int CachedVersion;
 
         public QueryOfEntity With<TComponent>() where TComponent : IComponent
         {
             Included.Set(ComponentID<TComponent>.Value);
+            CachedGroup = null;
             return this;
         }
 
         public QueryOfEntity Without<TComponent>() where TComponent : IComponent
         {
             Excluded.Set(ComponentID<TComponent>.Value);
+            CachedGroup = null;
             return this;
         }
 
         internal readonly Group GetGroup()
         {
-            Composition composition = new Composition(Included, Excluded);
-            Group group = Group.GetGroup(composition);
-            return group;
+            if (CachedGroup != null && CachedVersion == World.Version)
+                return CachedGroup;
+
+            return Group.GetGroup(new Composition(Included, Excluded));
         }
 
         public readonly EntityEnumerator GetEnumerator() => GetGroup().GetEntities();
+
         public readonly Entity Single() => GetGroup().Single();
     }
-    
+
     public struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
     {
         internal Mask Included;
         internal Mask Excluded;
-        
+        internal Group CachedGroup;
+        internal int CachedVersion;
+
         public QueryOfAspect<TAspect> With<TComponent>() where TComponent : IComponent
         {
             Included.Set(ComponentID<TComponent>.Value);
+            CachedGroup = null;
             return this;
         }
 
         public QueryOfAspect<TAspect> Without<TComponent>() where TComponent : IComponent
         {
             Excluded.Set(ComponentID<TComponent>.Value);
+            CachedGroup = null;
             return this;
         }
-        
+
         internal readonly Group GetGroup()
         {
-            Composition composition = new Composition(Included, Excluded);
-            Group group = Group.GetGroup(composition);
-            return group;
+            if (CachedGroup != null && CachedVersion == World.Version)
+                return CachedGroup;
+
+            return Group.GetGroup(new Composition(Included, Excluded));
         }
-        
+
         public readonly AspectsEnumerator<TAspect> GetEnumerator() => GetGroup().GetAspects<TAspect>();
+
         public readonly TAspect Single() => GetGroup().Single().As<TAspect>();
     }
 }

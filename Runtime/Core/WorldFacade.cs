@@ -24,7 +24,7 @@ namespace Yogurt
 
         public static unsafe EntityMeta* GetMeta(Entity entity)
         {
-            return World.EntitiesMetas.Get(entity);
+            return World.EntitiesMetas.Peek(entity.ID);
         }
 
         public static void RemoveEntity(Entity entity)

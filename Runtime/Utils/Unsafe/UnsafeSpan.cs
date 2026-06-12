@@ -53,6 +53,11 @@ namespace Yogurt
             return GetUnsafe(index);
         }
         
+        public T* Peek(int index)
+        {
+            return GetUnsafe((uint)index < (uint)capacity ? index : 0);
+        }
+
         private T* GetUnsafe(int index)
         {
             return (T*) (memoryPointer + index * elementSize);

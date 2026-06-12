@@ -17,6 +17,10 @@ namespace Yogurt
 
         public void Initialize()
         {
+            IsAlive = false;
+            Id = 0;
+            Age = 0;
+
             Clear();
             Groups = new(4);
             Childs = new(4);

@@ -32,6 +32,9 @@ namespace Yogurt
 
         public unsafe void Update()
         {
+            if (operations.Count == 0)
+                return;
+
             System.Span<ComponentID> componentsBuffer = stackalloc ComponentID[Consts.MAX_COMPONENTS];
 
             while (operations.Count > 0)

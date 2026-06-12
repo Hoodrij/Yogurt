@@ -1,29 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Yogurt
 {
     public static class AspectCache
     {
-        private static Dictionary<Type, Mask> cache = new();
-        
         public static QueryOfAspect<TAspect> Get<TAspect>() where TAspect : struct, IAspect
         {
-            QueryOfAspect<TAspect> query = new QueryOfAspect<TAspect>();
-            Type aspectType = typeof(TAspect);
-
-            if (!cache.TryGetValue(aspectType, out Mask mask))
-            {
-                mask = GenerateMask(aspectType);
-                cache.Add(aspectType, mask);
-            }
-
-            query.Included = mask;
+            QueryOfAspect<TAspect> query = default;
+            query.Included = AspectCache<TAspect>.IncludedMask;
+            query.CachedGroup = AspectCache<TAspect>.TryGetGroup();
+            query.CachedVersion = World.Version;
             return query;
         }
-        
-        private static Mask GenerateMask(Type aspectType)
+
+        internal static Mask GenerateMask(Type aspectType)
         {
             Mask mask = default;
             foreach (PropertyInfo field in aspectType.GetProperties())
@@ -47,10 +38,32 @@ namespace Yogurt
 
             return mask;
         }
+    }
 
-        public static void Clear()
+    internal static class AspectCache<TAspect> where TAspect : struct, IAspect
+    {
+        public static readonly Mask IncludedMask = AspectCache.GenerateMask(typeof(TAspect));
+
+        private static readonly Composition composition = new(IncludedMask, default);
+        private static Group group;
+        private static int version = -1;
+
+        public static Group TryGetGroup()
         {
-            cache.Clear();
+            if (WorldFacade.World == null)
+                return null;
+
+            if (version == World.Version)
+                return group;
+
+            if (Group.Cache.TryGetValue(composition, out Group found))
+            {
+                group = found;
+                version = World.Version;
+                return group;
+            }
+
+            return null;
         }
     }
 }

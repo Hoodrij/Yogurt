@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Yogurt
 {
@@ -21,19 +22,14 @@ namespace Yogurt
                 if (!UnityEngine.Application.isPlaying)
                     return false;
 #endif
-                return IsAliveFast;
+                return IsAlive(Meta);
             }
         }
-        
-        private bool IsAliveFast
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsAlive(EntityMeta* meta)
         {
-            get
-            {
-                if (this == Null)
-                    return false;
-                EntityMeta* meta = Meta;
-                return meta->IsAlive && meta->Age == Age;
-            }
+            return meta->IsAlive && meta->Age == Age;
         }
 
         internal EntityMeta* Meta => WorldFacade.GetMeta(this);
