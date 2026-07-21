@@ -63,6 +63,14 @@
         public readonly EntityEnumerator GetEnumerator() => GetGroup().GetEntities();
 
         public readonly Entity Single() => GetGroup().Single();
+
+        public readonly void Warmup()
+        {
+            if (WorldFacade.World == null)
+                return;
+
+            GetGroup();
+        }
     }
 
     public struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
@@ -97,5 +105,13 @@
         public readonly AspectsEnumerator<TAspect> GetEnumerator() => GetGroup().GetAspects<TAspect>();
 
         public readonly TAspect Single() => GetGroup().Single().As<TAspect>();
+
+        public readonly void Warmup()
+        {
+            if (WorldFacade.World == null)
+                return;
+
+            GetGroup();
+        }
     }
 }

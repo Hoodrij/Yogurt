@@ -17,8 +17,10 @@ namespace Yogurt
 
         private World()
         {
+            WorldFacade.World = this;
             Version++;
             Storage.Initialize();
+            QueryWarmup.Run();
 
 #if UNITY_2019_1_OR_NEWER
             UnityEngine.Application.quitting += Dispose;

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 229eefe78f7c28c4cb9198fd5b8cff45
+guid: 70a8a73bd321f4499b391707f89f75de
 labels:
 - RoslynAnalyzer
 PluginImporter:
@@ -10,19 +10,12 @@ PluginImporter:
   defineConstraints: []
   isPreloaded: 0
   isOverridable: 0
-  isExplicitlyReferenced: 0
-  validateReferences: 1
+  isExplicitlyReferenced: 1
+  validateReferences: 0
   platformData:
-    Android:
-      enabled: 0
-      settings:
-        AndroidLibraryDependee: UnityLibrary
-        AndroidSharedLibraryType: Executable
-        CPU: ARMv7
     Any:
       enabled: 0
       settings:
-        Exclude Android: 1
         Exclude Editor: 1
         Exclude Linux64: 1
         Exclude OSXUniversal: 1
