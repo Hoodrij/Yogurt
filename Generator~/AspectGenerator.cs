@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace AspectSourceGenerator
+namespace Yogurt.Generator
 {
     [Generator]
     public class AspectGenerator : IIncrementalGenerator
