@@ -1,0 +1,5 @@
+bin/
+obj/
+
+# The repository-level Unity ignore pattern excludes all project files.
+!AspectSourceGenerator.csproj

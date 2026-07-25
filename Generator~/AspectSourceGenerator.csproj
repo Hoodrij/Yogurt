@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>11</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <RootNamespace>AspectSourceGenerator</RootNamespace>
+    <AssemblyName>Generator</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Unity 2022.3 ships Roslyn 4.3.0; analyzers must not reference a newer version. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="[4.3.0]" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
