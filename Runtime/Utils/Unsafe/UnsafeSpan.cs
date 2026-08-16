@@ -30,6 +30,8 @@ namespace Yogurt
 
         public T* Get(int index)
         {
+            EnsureAllocated();
+
             if (index >= capacity)
             {
                 int oldCapacity = capacity;
@@ -45,6 +47,7 @@ namespace Yogurt
                     GetUnsafe(i)->Initialize();
                 }
             }
+
             if (index + 1 > Count)
             {
                 Count = index + 1;
@@ -52,10 +55,29 @@ namespace Yogurt
 
             return GetUnsafe(index);
         }
-        
+
         public T* Peek(int index)
         {
-            return GetUnsafe((uint)index < (uint)capacity ? index : 0);
+            return memoryPointer == IntPtr.Zero
+                ? null
+                : GetUnsafe((uint)index < (uint)capacity ? index : 0);
+        }
+
+        private void EnsureAllocated()
+        {
+            if (memoryPointer != IntPtr.Zero)
+            {
+                return;
+            }
+
+            capacity = 4;
+            elementSize = sizeof(T);
+            memoryPointer = Marshal.AllocHGlobal(capacity * elementSize);
+
+            for (int i = 0; i < capacity; i++)
+            {
+                GetUnsafe(i)->Initialize();
+            }
         }
 
         private T* GetUnsafe(int index)
@@ -82,7 +104,7 @@ namespace Yogurt
                 {
                     for (int j = i; j < Count - 1; ++j)
                     {
-                        T* next = GetUnsafe(j+1);
+                        T* next = GetUnsafe(j + 1);
                         Set(j, *next);
                     }
 
@@ -99,17 +121,21 @@ namespace Yogurt
 
         public void Dispose()
         {
+            if (memoryPointer == IntPtr.Zero)
+            {
+                return;
+            }
+
             for (int i = 0; i < capacity; i++)
             {
                 GetUnsafe(i)->Dispose();
             }
-            
+
             Marshal.FreeHGlobal(memoryPointer);
             memoryPointer = IntPtr.Zero;
             capacity = 0;
             Count = 0;
         }
-        
     }
 
     public interface IUnmanaged<T> : IDisposable, IEquatable<T> where T : unmanaged

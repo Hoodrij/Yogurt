@@ -11,7 +11,7 @@ namespace Yogurt
         internal Mask ComponentsMask;
 
         internal UnsafeSpan<Composition> Groups;
-        
+
         internal UnsafeSpan<Entity> Childs;
         internal Entity Parent;
 
@@ -21,9 +21,9 @@ namespace Yogurt
             Id = 0;
             Age = 0;
 
+            Groups = default;
+            Childs = default;
             Clear();
-            Groups = new(4);
-            Childs = new(4);
         }
 
         public void Dispose()
@@ -40,11 +40,11 @@ namespace Yogurt
             Groups.Clear();
             Childs.Clear();
         }
-        
+
         public bool Equals(EntityMeta other)
         {
-            return IsAlive == other.IsAlive 
-                   && Age == other.Age 
+            return IsAlive == other.IsAlive
+                   && Age == other.Age
                    && Id == other.Id;
         }
     }

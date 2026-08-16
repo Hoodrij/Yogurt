@@ -8,7 +8,7 @@ namespace Yogurt
     [DebuggerDisplay("{Name}")]
     internal readonly struct ComponentID : IEquatable<ComponentID>
     {
-        private static Dictionary<Type, ComponentID> componentsIds = new(Consts.MAX_COMPONENTS, comparer: TypeEqualityComparer.Instance);
+        private static readonly Dictionary<Type, ComponentID> componentsIds = new(Consts.MAX_COMPONENTS, comparer: TypeEqualityComparer.Instance);
 
         private readonly ushort ID;
 
@@ -19,12 +19,17 @@ namespace Yogurt
 
         public static ComponentID Of(Type type)
         {
+            return ComponentRegistry.GetOrRegister(type);
+        }
+
+        internal static ComponentID GetOrCreate(Type type)
+        {
             if (componentsIds.TryGetValue(type, out ComponentID componentId))
             {
                 return componentId;
             }
 
-            ushort newId = (ushort)componentsIds.Values.Count;
+            ushort newId = (ushort)componentsIds.Count;
             if (newId >= Consts.MAX_COMPONENTS)
             {
                 throw new InvalidOperationException($"Maximum component types exceeded ({Consts.MAX_COMPONENTS}). Increase MASK_ULONGS in Consts.cs");
@@ -44,7 +49,7 @@ namespace Yogurt
         {
             return new ComponentID(id);
         }
-        
+
         internal string Name
         {
             get
@@ -76,6 +81,6 @@ namespace Yogurt
 
     internal static class ComponentID<T> where T : IComponent
     {
-        public static readonly ComponentID Value = ComponentID.Of(typeof(T));
+        public static readonly ComponentID Value = ComponentRegistry.GetOrRegister<T>();
     }
 }

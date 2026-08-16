@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Yogurt
 {
     internal abstract class Storage
     {
-        private static Storage[] All;
+        private static readonly Storage[] all = new Storage[Consts.MAX_COMPONENTS];
 
         public Stack<Group> Groups = new();
 
@@ -16,46 +15,33 @@ namespace Yogurt
 
         public static void Initialize()
         {
-            if (All != null)
-            {
-                ResetAll();
-                return;
-            }
+            ResetAll();
+        }
 
-            All = new Storage[Consts.MAX_COMPONENTS];
+        internal static void Register<T>(ComponentID componentId) where T : IComponent
+        {
+            all[componentId] ??= new Storage<T>();
+        }
 
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                foreach (Type type in assembly.GetTypes())
-                {
-                    if (type.IsGenericType || !typeof(IComponent).IsAssignableFrom(type))
-                        continue;
-
-                    Type genericStorage = typeof(Storage<>).MakeGenericType(type);
-                    Storage storage = (Storage)Activator.CreateInstance(genericStorage);
-                    All[ComponentID.Of(type)] = storage;
-                }
-            }
+        internal static void Register(ComponentID componentId, Storage storage)
+        {
+            all[componentId] ??= storage;
         }
 
         public static void ResetAll()
         {
-            if (All == null)
-                return;
-
-            foreach (Storage storage in All)
+            foreach (Storage storage in all)
             {
                 storage?.Reset();
             }
         }
 
-        public static Storage Of(ComponentID componentId) => All[componentId];
+        public static Storage Of(ComponentID componentId) => all[componentId];
     }
 
     internal class Storage<T> : Storage where T : IComponent
     {
-        private static Storage<T> instance;
-        public static Storage<T> Instance => instance ??= (Storage<T>)Of(ComponentID<T>.Value);
+        public static Storage<T> Instance => (Storage<T>)Of(ComponentID<T>.Value);
 
         private T[] components = new T[Consts.INITIAL_ENTITIES_COUNT];
         public override IComponent GetBoxed(Entity entity) => components[entity];
@@ -73,7 +59,7 @@ namespace Yogurt
             Groups.Clear();
             Array.Clear(components, 0, components.Length);
         }
-        
+
         public void Set(T component, Entity entity)
         {
             AssureSize();
@@ -82,7 +68,7 @@ namespace Yogurt
 
             void AssureSize()
             {
-                if (entity < components.Length) 
+                if (entity < components.Length)
                     return;
                 int newSize = components.Length;
                 while (newSize <= entity)
