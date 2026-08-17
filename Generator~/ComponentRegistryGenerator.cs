@@ -84,7 +84,7 @@ namespace Yogurt.Generator
 
             foreach (string component in components)
             {
-                source.Append("            global::Yogurt.ComponentRegistry.Register<");
+                source.Append("            global::Yogurt.StorageFactory.Create<");
                 source.Append(component);
                 source.AppendLine(">();");
             }

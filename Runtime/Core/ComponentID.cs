@@ -19,11 +19,6 @@ namespace Yogurt
 
         public static ComponentID Of(Type type)
         {
-            return ComponentRegistry.GetOrRegister(type);
-        }
-
-        internal static ComponentID GetOrCreate(Type type)
-        {
             if (componentsIds.TryGetValue(type, out ComponentID componentId))
             {
                 return componentId;
@@ -81,6 +76,6 @@ namespace Yogurt
 
     internal static class ComponentID<T> where T : IComponent
     {
-        public static readonly ComponentID Value = ComponentRegistry.GetOrRegister<T>();
+        public static readonly ComponentID Value = ComponentID.Of(typeof(T));
     }
 }

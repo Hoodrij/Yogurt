@@ -3,6 +3,14 @@ using System.Collections.Generic;
 
 namespace Yogurt
 {
+    public static class StorageFactory
+    {
+        public static void Create<T>() where T : IComponent
+        {
+            Storage.Create<T>(ComponentID<T>.Value);
+        }
+    }
+        
     internal abstract class Storage
     {
         private static readonly Storage[] all = new Storage[Consts.MAX_COMPONENTS];
@@ -18,14 +26,9 @@ namespace Yogurt
             ResetAll();
         }
 
-        internal static void Register<T>(ComponentID componentId) where T : IComponent
+        public static void Create<T>(ComponentID componentId) where T : IComponent
         {
             all[componentId] ??= new Storage<T>();
-        }
-
-        internal static void Register(ComponentID componentId, Storage storage)
-        {
-            all[componentId] ??= storage;
         }
 
         public static void ResetAll()
