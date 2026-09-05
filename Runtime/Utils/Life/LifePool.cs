@@ -108,17 +108,13 @@ namespace Yogurt
 
         public static async Life Or(Life a, Life b)
         {
-            OrCompletionSource src = OrCompletionSource.Create();
-            a.GetAwaiter().SourceOnCompleted(s => ((OrCompletionSource)s).OnTaskCompleted(), src);
-            b.GetAwaiter().SourceOnCompleted(s => ((OrCompletionSource)s).OnTaskCompleted(), src);
+            OrCompletionSource src = OrCompletionSource.Create(a, b);
             await src.Task;
         }
 
         public static async Life And(Life a, Life b)
         {
-            AndCompletionSource src = AndCompletionSource.Create();
-            a.GetAwaiter().SourceOnCompleted(s => ((AndCompletionSource)s).OnTaskCompleted(), src);
-            b.GetAwaiter().SourceOnCompleted(s => ((AndCompletionSource)s).OnTaskCompleted(), src);
+            AndCompletionSource src = AndCompletionSource.Create(a, b);
             await src.Task;
         }
     }

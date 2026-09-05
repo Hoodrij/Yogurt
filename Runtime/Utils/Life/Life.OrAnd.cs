@@ -10,33 +10,71 @@ namespace Yogurt
         private static readonly ObjectPool<OrCompletionSource> pool = new(() => new OrCompletionSource());
         
         private UniTaskCompletionSourceCore<AsyncUnit> core;
+        private UniTask.Awaiter first;
+        private UniTask.Awaiter second;
         private int remaining;
+        private int references;
 
         public UniTask Task => new UniTask(this, core.Version);
 
-        public static OrCompletionSource Create()
+        public static OrCompletionSource Create(Life a, Life b)
         {
             OrCompletionSource src = pool.Get();
-            src.core.Reset();
             src.remaining = 2;
+            // Keep the source until both callbacks finish and GetResult consumes it.
+            src.references = 3;
+            src.first = a.GetAwaiter();
+            src.second = b.GetAwaiter();
+            src.first.SourceOnCompleted(s => ((OrCompletionSource)s).OnFirstCompleted(), src);
+            src.second.SourceOnCompleted(s => ((OrCompletionSource)s).OnSecondCompleted(), src);
             return src;
         }
 
-        public void OnTaskCompleted()
+        private void OnFirstCompleted()
         {
-            if (Interlocked.Decrement(ref remaining) == 1)
+            UniTask.Awaiter awaiter = first;
+            first = default;
+            awaiter.GetResult();
+            OnTaskCompleted();
+        }
+
+        private void OnSecondCompleted()
+        {
+            UniTask.Awaiter awaiter = second;
+            second = default;
+            awaiter.GetResult();
+            OnTaskCompleted();
+        }
+
+        private void OnTaskCompleted()
+        {
+            try
             {
-                core.TrySetResult(AsyncUnit.Default);
+                if (Interlocked.Decrement(ref remaining) == 1)
+                    core.TrySetResult(AsyncUnit.Default);
             }
-            else if (remaining == 0)
+            finally
             {
+                Release();
+            }
+        }
+
+        private void Release()
+        {
+            if (Interlocked.Decrement(ref references) == 0)
+            {
+                core.Reset();
                 pool.Release(this);
             }
         }
 
         public UniTaskStatus GetStatus(short token) => core.GetStatus(token);
         public UniTaskStatus UnsafeGetStatus() => core.UnsafeGetStatus();
-        public void GetResult(short token) => core.GetResult(token);
+        public void GetResult(short token)
+        {
+            try { core.GetResult(token); }
+            finally { Release(); }
+        }
         public void OnCompleted(Action<object> continuation, object state, short token) => core.OnCompleted(continuation, state, token);
     }
 
@@ -45,30 +83,71 @@ namespace Yogurt
         private static readonly ObjectPool<AndCompletionSource> pool = new(() => new AndCompletionSource());
 
         private UniTaskCompletionSourceCore<AsyncUnit> core;
+        private UniTask.Awaiter first;
+        private UniTask.Awaiter second;
         private int remaining;
+        private int references;
 
         public UniTask Task => new UniTask(this, core.Version);
 
-        public static AndCompletionSource Create()
+        public static AndCompletionSource Create(Life a, Life b)
         {
             AndCompletionSource src = pool.Get();
-            src.core.Reset();
             src.remaining = 2;
+            // Keep the source until both callbacks finish and GetResult consumes it.
+            src.references = 3;
+            src.first = a.GetAwaiter();
+            src.second = b.GetAwaiter();
+            src.first.SourceOnCompleted(s => ((AndCompletionSource)s).OnFirstCompleted(), src);
+            src.second.SourceOnCompleted(s => ((AndCompletionSource)s).OnSecondCompleted(), src);
             return src;
         }
 
-        public void OnTaskCompleted()
+        private void OnFirstCompleted()
         {
-            if (Interlocked.Decrement(ref remaining) == 0)
+            UniTask.Awaiter awaiter = first;
+            first = default;
+            awaiter.GetResult();
+            OnTaskCompleted();
+        }
+
+        private void OnSecondCompleted()
+        {
+            UniTask.Awaiter awaiter = second;
+            second = default;
+            awaiter.GetResult();
+            OnTaskCompleted();
+        }
+
+        private void OnTaskCompleted()
+        {
+            try
             {
-                core.TrySetResult(AsyncUnit.Default);
+                if (Interlocked.Decrement(ref remaining) == 0)
+                    core.TrySetResult(AsyncUnit.Default);
+            }
+            finally
+            {
+                Release();
+            }
+        }
+
+        private void Release()
+        {
+            if (Interlocked.Decrement(ref references) == 0)
+            {
+                core.Reset();
                 pool.Release(this);
             }
         }
 
         public UniTaskStatus GetStatus(short token) => core.GetStatus(token);
         public UniTaskStatus UnsafeGetStatus() => core.UnsafeGetStatus();
-        public void GetResult(short token) => core.GetResult(token);
+        public void GetResult(short token)
+        {
+            try { core.GetResult(token); }
+            finally { Release(); }
+        }
         public void OnCompleted(Action<object> continuation, object state, short token) => core.OnCompleted(continuation, state, token);
     }
 }
