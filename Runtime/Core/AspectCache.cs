@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 
 namespace Yogurt
 {
@@ -14,39 +13,31 @@ namespace Yogurt
             return query;
         }
 
-        internal static Mask GenerateMask(Type aspectType)
+        /// <summary>Registers the component mask emitted by the aspect cache generator.</summary>
+        public static void Register<TAspect>(QueryOfEntity query) where TAspect : struct, IAspect
         {
-            Mask mask = default;
-            foreach (PropertyInfo field in aspectType.GetProperties())
-            {
-                Type propertyType = field.PropertyType;
-                if (propertyType.IsByRef)
-                {
-                    propertyType = propertyType.GetElementType();
-                }
-                if (propertyType.GetInterface(nameof(IComponent)) != null)
-                {
-                    mask.Set(ComponentID.Of(propertyType));
-                }
-
-                if (propertyType.GetInterface(nameof(IAspect)) != null)
-                {
-                    Mask nestedMask = GenerateMask(propertyType);
-                    mask = mask.Or(nestedMask);
-                }
-            }
-
-            return mask;
+            AspectCache<TAspect>.Register(query.Included);
         }
     }
 
     internal static class AspectCache<TAspect> where TAspect : struct, IAspect
     {
-        public static readonly Mask IncludedMask = AspectCache.GenerateMask(typeof(TAspect));
-
-        private static readonly Composition composition = new(IncludedMask, default);
+        private static bool registered;
+        private static Composition composition;
         private static Group group;
         private static int version = -1;
+
+        public static Mask IncludedMask { get; private set; }
+
+        public static void Register(Mask mask)
+        {
+            if (registered)
+                return;
+
+            IncludedMask = mask;
+            composition = new Composition(mask, default);
+            registered = true;
+        }
 
         public static Group TryGetGroup()
         {
