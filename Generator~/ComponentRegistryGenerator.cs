@@ -71,9 +71,7 @@ namespace Yogurt.Generator
             source.AppendLine("    {");
             source.AppendLine("        private static bool registered;");
             source.AppendLine();
-            source.AppendLine("#if UNITY_2019_1_OR_NEWER");
-            source.AppendLine("        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.AfterAssembliesLoaded)]");
-            source.AppendLine("#endif");
+            RuntimeInitialization.AppendAttribute(source);
             source.AppendLine("        internal static void Register()");
             source.AppendLine("        {");
             source.AppendLine("            if (registered)");

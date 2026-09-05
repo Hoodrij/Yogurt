@@ -69,10 +69,7 @@ namespace Yogurt.Generator
             source.AppendLine("    internal static class AspectCache_Roslyn");
             source.AppendLine("    {");
             source.AppendLine("        private static bool registered;");
-            source.AppendLine("#if UNITY_2019_1_OR_NEWER");
-            // Masks must exist before the query warmup callbacks at AfterAssembliesLoaded.
-            source.AppendLine("        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]");
-            source.AppendLine("#endif");
+            RuntimeInitialization.AppendAttribute(source);
             source.AppendLine("        internal static void Register()");
             source.AppendLine("        {");
             source.AppendLine("            if (registered) return;");

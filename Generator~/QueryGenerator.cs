@@ -54,9 +54,7 @@ namespace Yogurt.Generator
                 sb.AppendLine("    {");
                 sb.AppendLine("        private static bool registered;");
                 sb.AppendLine();
-                sb.AppendLine("#if UNITY_2019_1_OR_NEWER");
-                sb.AppendLine("        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.AfterAssembliesLoaded)]");
-                sb.AppendLine("#endif");
+                RuntimeInitialization.AppendAttribute(sb);
                 sb.AppendLine("        internal static void Register()");
                 sb.AppendLine("        {");
                 sb.AppendLine("            // Guard for disabled domain reload: statics survive, list must not grow.");

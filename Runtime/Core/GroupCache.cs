@@ -22,7 +22,7 @@
             return new Composition(mask, default);
         }
 
-        public static Group TryGet()
+        private static Group TryGet()
         {
             if (WorldFacade.World == null)
                 return null;
