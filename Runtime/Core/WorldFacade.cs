@@ -6,9 +6,14 @@ namespace Yogurt
     {
         public static World World;
         
-        public static void Enqueue(PostProcessor.Action action, Entity entity, ComponentID componentID = default)
+        public static void EnqueueComponentChange(Entity entity, ComponentID componentId)
         {
-            World.PostProcessor.Enqueue(action, entity, componentID);
+            World.PostProcessor.EnqueueComponentChange(entity, componentId);
+        }
+
+        public static void EnqueueKill(Entity entity)
+        {
+            World.PostProcessor.EnqueueKill(entity);
         }
 
         public static void UpdateWorld()

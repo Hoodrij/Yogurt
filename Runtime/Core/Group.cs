@@ -1,45 +1,34 @@
 using System;
 using System.Collections.Generic;
-using Yogurt.Utils;
 
 namespace Yogurt
 {
-    internal class Group
+    internal sealed class Group
     {
-        internal static Dictionary<Composition, Group> Cache = new(CompositionEqualityComparer.Instance);
-
         private Entity[] dense = new Entity[Consts.INITIAL_ENTITIES_COUNT];
         private int[] sparse = new int[Consts.INITIAL_ENTITIES_COUNT]; // 0 = absent, otherwise denseIndex + 1
         private int count;
         private readonly Composition composition;
+        private readonly Mask components;
+        private readonly GroupId Id;
 
-        public static Group GetGroup(Composition composition)
+        internal Group(GroupId id, Composition composition)
         {
-            return Cache.TryGetValue(composition, out Group group)
-                ? group
-                : new Group(composition);
+            Id = id;
+            this.composition = composition;
+
+            components = composition.Components;
+            while (components.TryPopFirst(out ComponentID componentId))
+            {
+                Storage.Of(componentId).Groups.Push(this);
+            }
         }
 
-        private Group(Composition composition)
+        internal unsafe void ProcessChange(Entity entity, EntityMeta* meta, in Mask remainingChanges)
         {
-            this.composition = composition;
-            Cache.Add(composition, this);
-
-            Span<ComponentID> buffer = stackalloc ComponentID[Consts.MAX_COMPONENTS];
-            int idsCount = composition.GetIds(buffer);
-            for (int i = 0; i < idsCount; i++)
-            {
-                ComponentID componentID = buffer[i];
-                Storage.Of(componentID).Groups.Push(this);
-            }
-
-            foreach (Entity entity in WorldFacade.GetEntities())
-            {
-                unsafe
-                {
-                    ProcessEntity(entity, entity.Meta);
-                }
-            }
+            // Other changed dependencies will reach this group again. Process it only on the last one.
+            if (!components.HasAny(remainingChanges))
+                ProcessEntity(entity, meta);
         }
 
         public void Dispose()
@@ -61,14 +50,14 @@ namespace Yogurt
             {
                 if (TryAdd(entity))
                 {
-                    meta->Groups.Add(composition);
+                    meta->Groups.Add(Id);
                 }
             }
             else
             {
                 if (TryRemove(entity))
                 {
-                    meta->Groups.Remove(composition);
+                    meta->Groups.Remove(Id);
                 }
             }
         }

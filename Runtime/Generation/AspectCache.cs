@@ -45,7 +45,7 @@
             if (version == World.Version)
                 return group;
 
-            if (Group.Cache.TryGetValue(composition, out Group found))
+            if (Groups.TryGet(composition, out Group found))
             {
                 group = found;
                 version = World.Version;

@@ -52,13 +52,13 @@ namespace Yogurt
             meta->Age = entity.Age;
             meta->IsAlive = true;
             meta->ComponentsMask.Clear();
+            meta->PendingComponentsMask.Clear();
 
             return entity;
         }
 
         public void Dispose()
         {
-            WorldFacade.World = null;
 #if UNITY_2019_1_OR_NEWER
             UnityEngine.Application.quitting -= Dispose;
 #endif
@@ -67,11 +67,9 @@ namespace Yogurt
             PostProcessor.Clear();
             Lifes.Clear();
 
-            foreach (Group group in Group.Cache.Values)
-            {
-                group.Dispose();
-            }
-            Group.Cache.Clear();
+            WorldFacade.World = null;
+
+            Groups.Clear();
 
             Storage.ResetAll();
             EntitiesMetas.Dispose();

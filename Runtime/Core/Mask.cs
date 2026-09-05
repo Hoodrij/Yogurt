@@ -45,7 +45,7 @@ namespace Yogurt
             return (bits[ulongIndex] & (1UL << bitIndex)) != 0;
         }
 
-        public readonly bool HasAny(Mask other)
+        public readonly bool HasAny(in Mask other)
         {
             for (int i = 0; i < Consts.MASK_ULONGS; i++)
             {
@@ -84,6 +84,24 @@ namespace Yogurt
             }
 
             return result;
+        }
+
+        // Consume one set bit without materializing an ID buffer.
+        public bool TryPopFirst(out ComponentID componentId)
+        {
+            for (int i = 0; i < Consts.MASK_ULONGS; i++)
+            {
+                ulong word = bits[i];
+                if (word == 0)
+                    continue;
+
+                bits[i] = word & (word - 1);
+                componentId = (ushort)((i << 6) + TrailingZeroCount(word));
+                return true;
+            }
+
+            componentId = default;
+            return false;
         }
 
         public readonly int GetIDs(Span<ComponentID> buffer)

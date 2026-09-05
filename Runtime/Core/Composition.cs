@@ -29,10 +29,7 @@ namespace Yogurt
                    && !meta->ComponentsMask.HasAny(excluded);
         }
         
-        public int GetIds(Span<ComponentID> buffer)
-        {
-            return included.Or(excluded).GetIDs(buffer);
-        }
+        internal Mask Components => included.Or(excluded);
 
         public override int GetHashCode()
         {

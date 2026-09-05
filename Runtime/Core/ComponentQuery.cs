@@ -1,12 +1,12 @@
 ﻿namespace Yogurt
 {
-    internal static class GroupCache<TComponent> where TComponent : IComponent
+    internal static class ComponentQuery<TComponent> where TComponent : IComponent
     {
         public static QueryOfEntity Get()
         {
             QueryOfEntity query = default;
             query.Included.Set(ComponentID<TComponent>.Value);
-            query.CachedGroup = TryGet();
+            query.CachedGroup = GetGroup();
             query.CachedVersion = World.Version;
             return query;
         }
@@ -22,7 +22,7 @@
             return new Composition(mask, default);
         }
 
-        private static Group TryGet()
+        private static Group GetGroup()
         {
             if (WorldFacade.World == null)
                 return null;
@@ -30,7 +30,7 @@
             if (version == World.Version)
                 return group;
 
-            if (Group.Cache.TryGetValue(composition, out Group found))
+            if (Groups.TryGet(composition, out Group found))
             {
                 group = found;
                 version = World.Version;

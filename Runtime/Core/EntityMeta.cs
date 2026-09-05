@@ -9,8 +9,9 @@ namespace Yogurt
         internal int Id;
         internal int Age;
         internal Mask ComponentsMask;
+        internal Mask PendingComponentsMask;
 
-        internal UnsafeSpan<Composition> Groups;
+        internal UnsafeSpan<GroupId> Groups;
 
         internal UnsafeSpan<Entity> Childs;
         internal Entity Parent;
@@ -37,6 +38,7 @@ namespace Yogurt
         {
             Parent = default;
             ComponentsMask.Clear();
+            PendingComponentsMask.Clear();
             Groups.Clear();
             Childs.Clear();
         }

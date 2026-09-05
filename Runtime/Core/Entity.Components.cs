@@ -24,7 +24,7 @@
             if (!meta->ComponentsMask.Has(componentID))
             {
                 meta->ComponentsMask.Set(componentID);
-                WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
+                WorldFacade.EnqueueComponentChange(this, componentID);
             }
 
             return this;
@@ -76,7 +76,7 @@
             if (meta->ComponentsMask.IsEmpty)
                 Kill();
             else
-                WorldFacade.Enqueue(PostProcessor.Action.ComponentsChanged, this, componentID);
+                WorldFacade.EnqueueComponentChange(this, componentID);
         }
 
         public void Kill()
@@ -89,7 +89,7 @@
             if (!IsAlive(meta))
                 return;
 
-            WorldFacade.Enqueue(PostProcessor.Action.Kill, this);
+            WorldFacade.EnqueueKill(this);
             WorldFacade.KillLife(this);
 
             meta->IsAlive = false;

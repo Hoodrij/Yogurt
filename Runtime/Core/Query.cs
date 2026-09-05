@@ -12,7 +12,7 @@
     {
         static QueryOfEntity Of<TComponent>() where TComponent : IComponent
         {
-            return GroupCache<TComponent>.Get();
+            return ComponentQuery<TComponent>.Get();
         }
 
         static ref TComponent Single<TComponent>() where TComponent : IComponent
@@ -57,7 +57,7 @@
             if (CachedGroup != null && CachedVersion == World.Version)
                 return CachedGroup;
 
-            return Group.GetGroup(new Composition(Included, Excluded));
+            return Groups.GetOrCreate(new Composition(Included, Excluded));
         }
 
         public readonly EntityEnumerator GetEnumerator() => GetGroup().GetEntities();
@@ -99,7 +99,7 @@
             if (CachedGroup != null && CachedVersion == World.Version)
                 return CachedGroup;
 
-            return Group.GetGroup(new Composition(Included, Excluded));
+            return Groups.GetOrCreate(new Composition(Included, Excluded));
         }
 
         public readonly AspectsEnumerator<TAspect> GetEnumerator() => GetGroup().GetAspects<TAspect>();
