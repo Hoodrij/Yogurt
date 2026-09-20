@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -7,7 +6,10 @@ namespace Yogurt
     {
         private static readonly Storage[] all = new Storage[Consts.MAX_COMPONENTS];
 
-        public Stack<Group> Groups = new();
+        // Groups that depend on this component (included or excluded).
+        // Flat array + count: the flush walks it for every changed component.
+        public Group[] Groups = new Group[4];
+        public int GroupsCount;
 
         public abstract IComponent GetBoxed(Entity entity);
         public abstract void ClearEntity(Entity entity);
@@ -20,7 +22,14 @@ namespace Yogurt
 
         public static void Create<T>(ComponentID componentId) where T : IComponent
         {
-            all[componentId] ??= new Storage<T>();
+            Storage<T> storage = (Storage<T>)all[componentId];
+            if (storage == null)
+            {
+                storage = new Storage<T>();
+                all[componentId] = storage;
+            }
+
+            Storage<T>.Instance = storage;
         }
 
         public static void ResetAll()
@@ -32,23 +41,47 @@ namespace Yogurt
         }
 
         public static Storage Of(ComponentID componentId) => all[componentId];
+
+        public void AddGroup(Group group)
+        {
+            if (GroupsCount == Groups.Length)
+                Array.Resize(ref Groups, GroupsCount * 2);
+
+            Groups[GroupsCount++] = group;
+        }
+
+        protected void ClearGroups()
+        {
+            Array.Clear(Groups, 0, GroupsCount);
+            GroupsCount = 0;
+        }
     }
 
-    
+
     internal class Storage<T> : Storage where T : IComponent
     {
+        // Value-type wrapper: a Slot[] store skips the array covariance check that a T[] store pays when T is a class.
+        private struct Slot
+        {
+            public T Value;
+        }
+
         internal const int PageSize = 1 << PageShift; // 4,096 entities per page
         private const int PageShift = 12;
         private const int PageMask = PageSize - 1;
 
-        public static Storage<T> Instance => (Storage<T>)Of(ComponentID<T>.Value);
+        /// <summary>Bound once by <see cref="Storage.Create{T}"/>: one static read per access, no cast.</summary>
+        public static Storage<T> Instance;
 
-        private T[][] pages = new T[1][];
+        /// <summary>Cached so a caller that already holds the storage skips a second generic static lookup.</summary>
+        public readonly ComponentID ID = ComponentID<T>.Value;
+
+        private Slot[][] pages = new Slot[1][];
 
         public override IComponent GetBoxed(Entity entity)
         {
             int id = entity;
-            return pages[id >> PageShift][id & PageMask];
+            return pages[id >> PageShift][id & PageMask].Value;
         }
 
         public override void ClearEntity(Entity entity)
@@ -58,7 +91,7 @@ namespace Yogurt
             if ((uint)pageIndex >= (uint)pages.Length)
                 return;
 
-            T[] page = pages[pageIndex];
+            Slot[] page = pages[pageIndex];
             if (page != null)
             {
                 page[id & PageMask] = default;
@@ -67,9 +100,9 @@ namespace Yogurt
 
         protected override void Reset()
         {
-            Groups.Clear();
+            ClearGroups();
 
-            foreach (T[] page in pages)
+            foreach (Slot[] page in pages)
             {
                 if (page != null)
                 {
@@ -87,14 +120,14 @@ namespace Yogurt
                 EnsurePageTable(pageIndex + 1);
             }
 
-            T[] page = pages[pageIndex] ??= new T[PageSize];
-            page[id & PageMask] = component;
+            Slot[] page = pages[pageIndex] ??= new Slot[PageSize];
+            page[id & PageMask].Value = component;
         }
 
         public ref T Get(Entity entity)
         {
             int id = entity;
-            return ref pages[id >> PageShift][id & PageMask];
+            return ref pages[id >> PageShift][id & PageMask].Value;
         }
 
         private void EnsurePageTable(int requiredLength)

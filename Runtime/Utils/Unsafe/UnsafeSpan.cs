@@ -9,109 +9,86 @@ namespace Yogurt
     {
         public int Count { get; private set; }
 
-        private int elementSize;
         private int capacity;
-        private IntPtr memoryPointer;
+        private T* items;
 
         public UnsafeSpan(int capacity)
         {
             this.capacity = capacity < 4 ? 4 : capacity;
-            elementSize = sizeof(T);
-            memoryPointer = Marshal.AllocHGlobal(this.capacity * elementSize);
+            items = Allocate(this.capacity);
             Count = 0;
-
-            for (int i = 0; i < this.capacity; i++)
-            {
-                GetUnsafe(i)->Initialize();
-            }
+            InitializeRange(0, this.capacity);
         }
 
         public T* this[int index] => Get(index);
 
+        /// <summary>Grows to fit <paramref name="index"/> and extends Count over it.</summary>
         public T* Get(int index)
         {
-            EnsureAllocated();
+            if (items == null)
+                EnsureAllocated();
 
             if (index >= capacity)
-            {
-                int oldCapacity = capacity;
-                while (index >= capacity)
-                {
-                    capacity <<= 1;
-                }
+                Grow(index);
 
-                memoryPointer = Marshal.ReAllocHGlobal(memoryPointer, (IntPtr)(capacity * elementSize));
-
-                for (int i = oldCapacity; i < capacity; i++)
-                {
-                    GetUnsafe(i)->Initialize();
-                }
-            }
-
-            if (index + 1 > Count)
-            {
+            if (index >= Count)
                 Count = index + 1;
-            }
 
-            return GetUnsafe(index);
+            return items + index;
         }
 
+        /// <summary>Read-only lookup: out-of-range indices resolve to slot 0, an unallocated span to null.</summary>
         public T* Peek(int index)
         {
-            return memoryPointer == IntPtr.Zero
+            return items == null
                 ? null
-                : GetUnsafe((uint)index < (uint)capacity ? index : 0);
-        }
-
-        private void EnsureAllocated()
-        {
-            if (memoryPointer != IntPtr.Zero)
-            {
-                return;
-            }
-
-            capacity = 4;
-            elementSize = sizeof(T);
-            memoryPointer = Marshal.AllocHGlobal(capacity * elementSize);
-
-            for (int i = 0; i < capacity; i++)
-            {
-                GetUnsafe(i)->Initialize();
-            }
-        }
-
-        private T* GetUnsafe(int index)
-        {
-            return (T*) (memoryPointer + index * elementSize);
+                : items + ((uint)index < (uint)capacity ? index : 0);
         }
 
         public void Set(int index, T value)
         {
-            T* t = Get(index);
-            *t = value;
+            *Get(index) = value;
         }
 
         public void Add(T value)
         {
-            Set(Count, value);
+            *Get(Count) = value;
         }
 
+        /// <summary>Order-preserving removal of the last occurrence.</summary>
         public void Remove(T value)
         {
             for (int i = Count - 1; i >= 0; i--)
             {
-                if (GetUnsafe(i)->Equals(value))
+                if (items[i].Equals(value))
                 {
-                    for (int j = i; j < Count - 1; ++j)
-                    {
-                        T* next = GetUnsafe(j + 1);
-                        Set(j, *next);
-                    }
-
-                    Count--;
-                    break;
+                    RemoveAt(i);
+                    return;
                 }
             }
+        }
+
+        /// <summary>Order-preserving removal: one memmove of the tail.</summary>
+        public void RemoveAt(int index)
+        {
+            int tail = Count - index - 1;
+            if (tail > 0)
+            {
+                long bytes = (long)tail * sizeof(T);
+                Buffer.MemoryCopy(items + index + 1, items + index, bytes, bytes);
+            }
+
+            Count--;
+        }
+
+        /// <summary>Order-changing removal: the last element takes the freed slot.</summary>
+        public void RemoveAtSwapBack(int index)
+        {
+            int last = Count - 1;
+            if (index != last)
+                items[index] = items[last];
+
+            Count = last;
         }
 
         public void Clear()
@@ -121,20 +98,50 @@ namespace Yogurt
 
         public void Dispose()
         {
-            if (memoryPointer == IntPtr.Zero)
-            {
+            if (items == null)
                 return;
-            }
 
             for (int i = 0; i < capacity; i++)
             {
-                GetUnsafe(i)->Dispose();
+                items[i].Dispose();
             }
 
-            Marshal.FreeHGlobal(memoryPointer);
-            memoryPointer = IntPtr.Zero;
+            Marshal.FreeHGlobal((IntPtr)items);
+            items = null;
             capacity = 0;
             Count = 0;
+        }
+
+        private void EnsureAllocated()
+        {
+            capacity = 4;
+            items = Allocate(capacity);
+            InitializeRange(0, capacity);
+        }
+
+        private void Grow(int index)
+        {
+            int oldCapacity = capacity;
+            while (index >= capacity)
+            {
+                capacity <<= 1;
+            }
+
+            items = (T*)Marshal.ReAllocHGlobal((IntPtr)items, (IntPtr)((long)capacity * sizeof(T)));
+            InitializeRange(oldCapacity, capacity);
+        }
+
+        private void InitializeRange(int from, int to)
+        {
+            for (int i = from; i < to; i++)
+            {
+                items[i].Initialize();
+            }
+        }
+
+        private static T* Allocate(int count)
+        {
+            return (T*)Marshal.AllocHGlobal((IntPtr)((long)count * sizeof(T)));
         }
     }
 

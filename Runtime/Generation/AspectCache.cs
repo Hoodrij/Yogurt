@@ -1,4 +1,4 @@
-﻿namespace Yogurt
+namespace Yogurt
 {
     public static class AspectCache
     {
@@ -37,6 +37,12 @@
             registered = true;
         }
 
+        /// <summary>Fast path for Query.Single: straight to the cached group, no query struct.</summary>
+        public static Entity Single()
+        {
+            return GetOrCreateGroup().Single();
+        }
+
         public static Group TryGetGroup()
         {
             if (WorldFacade.World == null)
@@ -53,6 +59,16 @@
             }
 
             return null;
+        }
+
+        private static Group GetOrCreateGroup()
+        {
+            if (version == World.Version)
+                return group;
+
+            group = Groups.GetOrCreate(composition);
+            version = World.Version;
+            return group;
         }
     }
 }

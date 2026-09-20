@@ -35,8 +35,7 @@ namespace Yogurt
             if (world.ReleasedEntities.Count > 0)
             {
                 entity = world.ReleasedEntities.Dequeue();
-                entity.Age += 1;
-                entity.Age %= int.MaxValue;
+                entity.Age += 1; // wrap-around is fine: liveness compares Age for equality only
             }
             else
             {

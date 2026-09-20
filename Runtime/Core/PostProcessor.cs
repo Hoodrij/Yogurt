@@ -85,9 +85,12 @@ namespace Yogurt
         {
             while (changes.TryPopFirst(out ComponentID componentId))
             {
-                foreach (Group group in Storage.Of(componentId).Groups)
+                Storage storage = Storage.Of(componentId);
+                Group[] groups = storage.Groups;
+                int count = storage.GroupsCount;
+                for (int i = 0; i < count; i++)
                 {
-                    group.ProcessChange(entity, meta, changes);
+                    groups[i].ProcessChange(entity, meta, changes);
                 }
             }
         }

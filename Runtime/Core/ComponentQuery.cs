@@ -1,19 +1,25 @@
-﻿namespace Yogurt
+namespace Yogurt
 {
     internal static class ComponentQuery<TComponent> where TComponent : IComponent
     {
+        private static readonly Composition composition = BuildComposition();
+        private static Group group;
+        private static int version = -1;
+
         public static QueryOfEntity Get()
         {
             QueryOfEntity query = default;
             query.Included.Set(ComponentID<TComponent>.Value);
-            query.CachedGroup = GetGroup();
+            query.CachedGroup = TryGetGroup();
             query.CachedVersion = World.Version;
             return query;
         }
-        
-        private static readonly Composition composition = BuildComposition();
-        private static Group group;
-        private static int version = -1;
+
+        /// <summary>Fast path for Query.Single: straight to the cached group, no query struct.</summary>
+        public static Entity Single()
+        {
+            return GetOrCreateGroup().Single();
+        }
 
         private static Composition BuildComposition()
         {
@@ -22,7 +28,7 @@
             return new Composition(mask, default);
         }
 
-        private static Group GetGroup()
+        private static Group TryGetGroup()
         {
             if (WorldFacade.World == null)
                 return null;
@@ -38,6 +44,16 @@
             }
 
             return null;
+        }
+
+        private static Group GetOrCreateGroup()
+        {
+            if (version == World.Version)
+                return group;
+
+            group = Groups.GetOrCreate(composition);
+            version = World.Version;
+            return group;
         }
     }
 }

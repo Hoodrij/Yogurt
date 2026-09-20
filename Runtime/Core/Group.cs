@@ -18,9 +18,12 @@ namespace Yogurt
             this.composition = composition;
 
             components = composition.Components;
-            while (components.TryPopFirst(out ComponentID componentId))
+
+            // TryPopFirst drains its receiver: pop from a copy so `components` stays intact for ProcessChange.
+            Mask dependencies = components;
+            while (dependencies.TryPopFirst(out ComponentID componentId))
             {
-                Storage.Of(componentId).Groups.Push(this);
+                Storage.Of(componentId).AddGroup(this);
             }
         }
 

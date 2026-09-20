@@ -18,9 +18,10 @@
             if (!IsAlive(meta))
                 return this;
 
-            Storage<T>.Instance.Set(component, this);
+            Storage<T> storage = Storage<T>.Instance;
+            storage.Set(component, this);
 
-            ComponentID componentID = ComponentID<T>.Value;
+            ComponentID componentID = storage.ID;
             if (!meta->ComponentsMask.Has(componentID))
             {
                 meta->ComponentsMask.Set(componentID);
@@ -69,9 +70,10 @@
             if (!IsAlive(meta))
                 return;
 
-            ComponentID componentID = ComponentID<T>.Value;
+            Storage<T> storage = Storage<T>.Instance;
+            ComponentID componentID = storage.ID;
             meta->ComponentsMask.UnSet(componentID);
-            Storage<T>.Instance.ClearEntity(this);
+            storage.ClearEntity(this);
 
             if (meta->ComponentsMask.IsEmpty)
                 Kill();

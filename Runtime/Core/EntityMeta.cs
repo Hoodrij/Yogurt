@@ -15,6 +15,7 @@ namespace Yogurt
 
         internal UnsafeSpan<Entity> Childs;
         internal Entity Parent;
+        internal int ParentIndex; // this entity's slot in Parent's Childs; enables O(1) unparent
 
         public void Initialize()
         {
@@ -37,6 +38,7 @@ namespace Yogurt
         public void Clear()
         {
             Parent = default;
+            ParentIndex = 0;
             ComponentsMask.Clear();
             PendingComponentsMask.Clear();
             Groups.Clear();

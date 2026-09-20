@@ -17,7 +17,7 @@
 
         static ref TComponent Single<TComponent>() where TComponent : IComponent
         {
-            return ref Of<TComponent>().Single().Get<TComponent>();
+            return ref ComponentQuery<TComponent>.Single().Get<TComponent>();
         }
 
         static QueryOfAspect<TAspect> Of<TAspect>(Void _ = default) where TAspect : struct, IAspect
@@ -27,7 +27,7 @@
 
         static TAspect Single<TAspect>(Void _ = default) where TAspect : struct, IAspect
         {
-            return Of<TAspect>().Single();
+            return AspectCache<TAspect>.Single().As<TAspect>();
         }
     }
 
