@@ -52,8 +52,8 @@ namespace Yogurt.Generator
                     continue;
                 }
 
-                registrations.Append("            global::Yogurt.AspectCache.Register<")
-                    .Append(Display(aspect)).Append(">(new global::Yogurt.QueryOfEntity()");
+                registrations.Append("            global::Yogurt.AspectCache<")
+                    .Append(Display(aspect)).Append(">.Register(new global::Yogurt.QueryOfEntity()");
                 foreach (ITypeSymbol component in components.OrderBy(Display))
                     registrations.Append(".With<").Append(Display(component)).Append(">()");
                 registrations.AppendLine(");");

@@ -7,16 +7,6 @@
 
     public static class AspectEx
     {
-        // replaced by code generation to get rid of boxing
-        
-        // public static TComponent Get<TComponent>(this Aspect aspect)  where TComponent : IComponent => aspect.Entity.Get<TComponent>();
-        // public static bool TryGet<TComponent>(this Aspect aspect, out TComponent component)  where TComponent : IComponent => aspect.Entity.TryGet(out component);
-        // public static void Add<TComponent>(this Aspect aspect, TComponent component)  where TComponent : IComponent => aspect.Entity.Set(component);
-        // public static void Set<TComponent>(this Aspect aspect, TComponent component)  where TComponent : IComponent => aspect.Entity.Set(component);
-        // public static bool Has<TComponent>(this Aspect aspect)  where TComponent : IComponent => aspect.Entity.Has<TComponent>();
-        // public static void Remove<TComponent>(this Aspect aspect)  where TComponent : IComponent => aspect.Entity.Remove<TComponent>();
-        // public static TOther As<TOther>(this IAspect aspect) where TOther : struct, IAspect => aspect.Entity.As<TOther>();
-        
         public static bool Exist<TAspect>(this TAspect aspect) where TAspect : IAspect => aspect.Entity.Exist;
         public static void Kill<TAspect>(this TAspect aspect) where TAspect : IAspect => aspect.Entity.Kill();
         

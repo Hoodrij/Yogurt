@@ -8,12 +8,11 @@ namespace Yogurt
         internal static int Version { get; private set; }
 
         public PostProcessor PostProcessor = new();
-        public UnsafeSpan<EntityMeta> EntitiesMetas = new(Consts.INITIAL_ENTITIES_COUNT);
+        public EntityMetas EntitiesMetas = new(Consts.INITIAL_ENTITIES_COUNT);
         public Queue<Entity> ReleasedEntities = new(Consts.INITIAL_ENTITIES_COUNT);
         public Dictionary<Entity, Life> Lifes = new(Consts.INITIAL_ENTITIES_COUNT, comparer: EntityEqualityComparer.Instance);
-        
-        // 0 index = default = Entity.Null
-        private int nextEntityID = 1;
+
+        private int nextEntityID = 1; // 0 is Entity.Null
 
         private World()
         {
@@ -30,7 +29,7 @@ namespace Yogurt
         public static Entity CreateEntity()
         {
             World world = WorldFacade.World ??= new World();
-            
+
             Entity entity;
             if (world.ReleasedEntities.Count > 0)
             {
@@ -50,8 +49,6 @@ namespace Yogurt
             meta->Id = entity.ID;
             meta->Age = entity.Age;
             meta->IsAlive = true;
-            meta->ComponentsMask.Clear();
-            meta->PendingComponentsMask.Clear();
 
             return entity;
         }

@@ -1,55 +1,50 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Yogurt
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct EntityMeta : IUnmanaged<EntityMeta>
+    internal unsafe struct EntityMeta
     {
-        internal bool IsAlive;
-        internal int Id;
-        internal int Age;
-        internal Mask ComponentsMask;
-        internal Mask PendingComponentsMask;
-
         internal UnsafeSpan<GroupId> Groups;
-
         internal UnsafeSpan<Entity> Childs;
         internal Entity Parent;
-        internal int ParentIndex; // this entity's slot in Parent's Childs; enables O(1) unparent
+        internal int ParentIndex;
+        internal int Id;
+        // Hot fields last: they share a cache line with the component mask that follows the struct.
+        internal int Age;
+        internal ushort ComponentCount;
+        internal bool HasPendingChanges;
+        internal bool IsAlive;
 
-        public void Initialize()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static ulong* Components(EntityMeta* meta) => (ulong*)(meta + 1);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static ulong* PendingComponents(EntityMeta* meta) => (ulong*)(meta + 1) + Mask.Words;
+
+        internal static void ClearPending(EntityMeta* meta)
         {
-            IsAlive = false;
-            Id = 0;
-            Age = 0;
-
-            Groups = default;
-            Childs = default;
-            Clear();
+            meta->HasPendingChanges = false;
+            Mask.Clear(PendingComponents(meta), Mask.Words);
         }
 
-        public void Dispose()
+        // Invariant: released slots have all-zero masks, so creation does not clear them. The caller zeroes the
+        // component mask; the pending mask is already empty (a dead entity's queued change is cleared before its kill).
+        internal static void Release(EntityMeta* meta)
         {
-            Clear();
+            meta->Parent = default;
+            meta->ParentIndex = 0;
+            meta->ComponentCount = 0;
+            meta->HasPendingChanges = false;
+            meta->Groups.Clear();
+            meta->Childs.Clear();
+        }
+
+        internal void Dispose()
+        {
             Groups.Dispose();
             Childs.Dispose();
-        }
-
-        public void Clear()
-        {
-            Parent = default;
-            ParentIndex = 0;
-            ComponentsMask.Clear();
-            PendingComponentsMask.Clear();
-            Groups.Clear();
-            Childs.Clear();
-        }
-
-        public bool Equals(EntityMeta other)
-        {
-            return IsAlive == other.IsAlive
-                   && Age == other.Age
-                   && Id == other.Id;
         }
     }
 }

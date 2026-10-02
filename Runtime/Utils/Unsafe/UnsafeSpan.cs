@@ -12,17 +12,9 @@ namespace Yogurt
         private int capacity;
         private T* items;
 
-        public UnsafeSpan(int capacity)
-        {
-            this.capacity = capacity < 4 ? 4 : capacity;
-            items = Allocate(this.capacity);
-            Count = 0;
-            InitializeRange(0, this.capacity);
-        }
-
         public T* this[int index] => Get(index);
 
-        /// <summary>Grows to fit <paramref name="index"/> and extends Count over it.</summary>
+        // Grows to fit the index and extends Count over it.
         public T* Get(int index)
         {
             if (items == null)
@@ -37,25 +29,11 @@ namespace Yogurt
             return items + index;
         }
 
-        /// <summary>Read-only lookup: out-of-range indices resolve to slot 0, an unallocated span to null.</summary>
-        public T* Peek(int index)
-        {
-            return items == null
-                ? null
-                : items + ((uint)index < (uint)capacity ? index : 0);
-        }
-
-        public void Set(int index, T value)
-        {
-            *Get(index) = value;
-        }
-
         public void Add(T value)
         {
             *Get(Count) = value;
         }
 
-        /// <summary>Order-preserving removal of the last occurrence.</summary>
         public void Remove(T value)
         {
             for (int i = Count - 1; i >= 0; i--)
@@ -68,7 +46,6 @@ namespace Yogurt
             }
         }
 
-        /// <summary>Order-preserving removal: one memmove of the tail.</summary>
         public void RemoveAt(int index)
         {
             int tail = Count - index - 1;
@@ -81,7 +58,6 @@ namespace Yogurt
             Count--;
         }
 
-        /// <summary>Order-changing removal: the last element takes the freed slot.</summary>
         public void RemoveAtSwapBack(int index)
         {
             int last = Count - 1;

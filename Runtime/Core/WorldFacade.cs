@@ -6,9 +6,9 @@ namespace Yogurt
     {
         public static World World;
         
-        public static void EnqueueComponentChange(Entity entity, ComponentID componentId)
+        public static unsafe void EnqueueComponentChange(Entity entity, EntityMeta* meta, ComponentID componentId)
         {
-            World.PostProcessor.EnqueueComponentChange(entity, componentId);
+            World.PostProcessor.EnqueueComponentChange(entity, meta, componentId);
         }
 
         public static void EnqueueKill(Entity entity)

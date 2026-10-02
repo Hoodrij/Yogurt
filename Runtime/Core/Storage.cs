@@ -4,10 +4,8 @@ namespace Yogurt
 {
     internal abstract class Storage
     {
-        private static readonly Storage[] all = new Storage[Consts.MAX_COMPONENTS];
+        private static Storage[] all = new Storage[Consts.INITIAL_COMPONENTS_COUNT];
 
-        // Groups that depend on this component (included or excluded).
-        // Flat array + count: the flush walks it for every changed component.
         public Group[] Groups = new Group[4];
         public int GroupsCount;
 
@@ -30,6 +28,20 @@ namespace Yogurt
             }
 
             Storage<T>.Instance = storage;
+        }
+
+        public static void EnsureCapacity(int componentCount)
+        {
+            if (componentCount <= all.Length)
+                return;
+
+            int length = all.Length;
+            while (length < componentCount)
+            {
+                length <<= 1;
+            }
+
+            Array.Resize(ref all, length);
         }
 
         public static void ResetAll()
@@ -60,20 +72,18 @@ namespace Yogurt
 
     internal class Storage<T> : Storage where T : IComponent
     {
-        // Value-type wrapper: a Slot[] store skips the array covariance check that a T[] store pays when T is a class.
+        // A struct wrapper: storing into Slot[] skips the array covariance check a T[] store pays for class T.
         private struct Slot
         {
             public T Value;
         }
 
-        internal const int PageSize = 1 << PageShift; // 4,096 entities per page
+        internal const int PageSize = 1 << PageShift;
         private const int PageShift = 12;
         private const int PageMask = PageSize - 1;
 
-        /// <summary>Bound once by <see cref="Storage.Create{T}"/>: one static read per access, no cast.</summary>
         public static Storage<T> Instance;
 
-        /// <summary>Cached so a caller that already holds the storage skips a second generic static lookup.</summary>
         public readonly ComponentID ID = ComponentID<T>.Value;
 
         private Slot[][] pages = new Slot[1][];

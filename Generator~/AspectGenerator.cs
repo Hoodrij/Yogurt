@@ -12,7 +12,6 @@ namespace Yogurt.Generator
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            // Find all type declarations (classes, structs, records)
             IncrementalValuesProvider<(TypeDeclarationSyntax TypeDeclaration, SemanticModel Semantic)> typeDeclarations = context.SyntaxProvider.CreateSyntaxProvider(
                 predicate: (node, _) => node is TypeDeclarationSyntax,
                 transform: (ctx, _) => (TypeDeclaration: (TypeDeclarationSyntax)ctx.Node, Semantic: ctx.SemanticModel))
@@ -27,7 +26,6 @@ namespace Yogurt.Generator
             }).Where(sym => sym != null)
             .Where(sym => sym != null && sym.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "Yogurt.IAspect"));
 
-            // Collect aspects and produce source
             IncrementalValueProvider<ImmutableArray<INamedTypeSymbol?>> collected = aspectTypes.Collect();
 
             context.RegisterSourceOutput(collected, (ctx, types) =>
@@ -48,7 +46,6 @@ namespace Yogurt.Generator
                     string? fullname = t?.ToDisplayString();
                     string access = GetAccessibilityString(t!);
                     sb.AppendLine($"""
-                                          // {fullname}
                                           {access} static ref TComponent Get<TComponent>(this {fullname} aspect) where TComponent : IComponent => ref aspect.Entity.Get<TComponent>();
                                           {access} static bool TryGet<TComponent>(this {fullname} aspect, out TComponent component) where TComponent : IComponent => aspect.Entity.TryGet(out component);
                                           {access} static void Add<TComponent>(this {fullname} aspect, TComponent component) where TComponent : IComponent => aspect.Entity.Set(component);
@@ -78,7 +75,7 @@ namespace Yogurt.Generator
                 case Accessibility.ProtectedOrInternal:
                     return "internal";
                 default:
-                    // Private/protected/nested-only: fallback to internal so generated extensions are emit-able at namespace scope.
+                    // Generated extensions live at namespace scope, which cannot be private or protected.
                     return "internal";
             }
         }

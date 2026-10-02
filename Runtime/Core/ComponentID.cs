@@ -8,7 +8,7 @@ namespace Yogurt
     [DebuggerDisplay("{Name}")]
     internal readonly struct ComponentID : IEquatable<ComponentID>
     {
-        private static readonly Dictionary<Type, ComponentID> componentsIds = new(Consts.MAX_COMPONENTS, comparer: TypeEqualityComparer.Instance);
+        private static readonly Dictionary<Type, ComponentID> componentsIds = new(Consts.INITIAL_COMPONENTS_COUNT, comparer: TypeEqualityComparer.Instance);
 
         private readonly ushort ID;
 
@@ -17,6 +17,7 @@ namespace Yogurt
             ID = id;
         }
 
+        // Registering a new type can widen entity masks, which moves entity metadata: resolve IDs before taking an EntityMeta pointer.
         public static ComponentID Of(Type type)
         {
             if (componentsIds.TryGetValue(type, out ComponentID componentId))
@@ -24,14 +25,16 @@ namespace Yogurt
                 return componentId;
             }
 
-            ushort newId = (ushort)componentsIds.Count;
-            if (newId >= Consts.MAX_COMPONENTS)
+            int newId = componentsIds.Count;
+            if (newId > ushort.MaxValue)
             {
-                throw new InvalidOperationException($"Maximum component types exceeded ({Consts.MAX_COMPONENTS}). Increase MASK_ULONGS in Consts.cs");
+                throw new InvalidOperationException($"Maximum component types exceeded ({ushort.MaxValue + 1}).");
             }
 
-            componentId = new ComponentID(newId);
+            componentId = new ComponentID((ushort)newId);
             componentsIds.Add(type, componentId);
+            Storage.EnsureCapacity(newId + 1);
+            Mask.EnsureCapacity(newId + 1);
             return componentId;
         }
 

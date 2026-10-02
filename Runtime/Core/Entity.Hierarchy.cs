@@ -26,7 +26,6 @@ namespace Yogurt
             return this;
         }
 
-        // O(1): each child remembers its slot in the parent's Childs; the last sibling takes the freed slot.
         private void UnParent(EntityMeta* meta)
         {
             if (meta->Parent == Null) return;

@@ -1,64 +1,45 @@
-﻿namespace Yogurt
+namespace Yogurt
 {
-    /// <summary>
-    /// QueryOfEntity query = Query.Of Player>();
-    /// Entity entity = Query.Of Player>().Single();
-    /// Player player = Query.Single Player>();
-    ///
-    /// PlayerAspect playerAspect = Query.Single PlayerAspect>();
-    /// PlayerAspect playerAspect1 = Query.Of PlayerAspect>().Single();
-    /// </summary>
     public interface Query
     {
         static QueryOfEntity Of<TComponent>() where TComponent : IComponent
         {
-            return ComponentQuery<TComponent>.Get();
+            return new QueryOfEntity { Node = ComponentQuery<TComponent>.Node };
         }
 
         static ref TComponent Single<TComponent>() where TComponent : IComponent
         {
-            return ref ComponentQuery<TComponent>.Single().Get<TComponent>();
+            return ref ComponentQuery<TComponent>.Node.GetGroup().Single().Get<TComponent>();
         }
 
         static QueryOfAspect<TAspect> Of<TAspect>(Void _ = default) where TAspect : struct, IAspect
         {
-            return AspectCache.Get<TAspect>();
+            return new QueryOfAspect<TAspect> { Node = AspectCache<TAspect>.Node };
         }
 
         static TAspect Single<TAspect>(Void _ = default) where TAspect : struct, IAspect
         {
-            return AspectCache<TAspect>.Single().As<TAspect>();
+            return AspectCache<TAspect>.Node.GetGroup().Single().As<TAspect>();
         }
     }
 
     public struct QueryOfEntity
     {
-        internal Mask Included;
-        internal Mask Excluded;
-        internal Group CachedGroup;
-        internal int CachedVersion;
+        internal QueryNode Node;
 
         public QueryOfEntity With<TComponent>() where TComponent : IComponent
         {
-            Included.Set(ComponentID<TComponent>.Value);
-            CachedGroup = null;
+            Node = (Node ?? QueryNode.Root).With(ComponentID<TComponent>.Value);
             return this;
         }
 
         public QueryOfEntity Without<TComponent>() where TComponent : IComponent
         {
-            Excluded.Set(ComponentID<TComponent>.Value);
-            CachedGroup = null;
+            Node = (Node ?? QueryNode.Root).Without(ComponentID<TComponent>.Value);
             return this;
         }
 
-        internal readonly Group GetGroup()
-        {
-            if (CachedGroup != null && CachedVersion == World.Version)
-                return CachedGroup;
-
-            return Groups.GetOrCreate(new Composition(Included, Excluded));
-        }
+        internal readonly Group GetGroup() => (Node ?? QueryNode.Root).GetGroup();
 
         public readonly EntityEnumerator GetEnumerator() => GetGroup().GetEntities();
 
@@ -75,32 +56,21 @@
 
     public struct QueryOfAspect<TAspect> where TAspect : struct, IAspect
     {
-        internal Mask Included;
-        internal Mask Excluded;
-        internal Group CachedGroup;
-        internal int CachedVersion;
+        internal QueryNode Node;
 
         public QueryOfAspect<TAspect> With<TComponent>() where TComponent : IComponent
         {
-            Included.Set(ComponentID<TComponent>.Value);
-            CachedGroup = null;
+            Node = (Node ?? QueryNode.Root).With(ComponentID<TComponent>.Value);
             return this;
         }
 
         public QueryOfAspect<TAspect> Without<TComponent>() where TComponent : IComponent
         {
-            Excluded.Set(ComponentID<TComponent>.Value);
-            CachedGroup = null;
+            Node = (Node ?? QueryNode.Root).Without(ComponentID<TComponent>.Value);
             return this;
         }
 
-        internal readonly Group GetGroup()
-        {
-            if (CachedGroup != null && CachedVersion == World.Version)
-                return CachedGroup;
-
-            return Groups.GetOrCreate(new Composition(Included, Excluded));
-        }
+        internal readonly Group GetGroup() => (Node ?? QueryNode.Root).GetGroup();
 
         public readonly AspectsEnumerator<TAspect> GetEnumerator() => GetGroup().GetAspects<TAspect>();
 

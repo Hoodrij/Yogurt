@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -8,16 +7,17 @@ namespace Yogurt
         internal static unsafe List<IComponent> GetComponents(this Entity entity)
         {
             List<IComponent> result = new();
-            EntityMeta* meta = entity.Meta;
+            ulong* components = EntityMeta.Components(entity.Meta);
 
-            Span<ComponentID> buffer = stackalloc ComponentID[Consts.MAX_COMPONENTS];
-            int count = meta->ComponentsMask.GetIDs(buffer);
-
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < Mask.Words; i++)
             {
-                ComponentID componentId = buffer[i];
-                Storage storage = Storage.Of(componentId);
-                result.Add(storage.GetBoxed(entity));
+                ulong word = components[i];
+                while (word != 0)
+                {
+                    ushort componentId = (ushort)((i << 6) + Mask.TrailingZeroCount(word));
+                    word &= word - 1;
+                    result.Add(Storage.Of(componentId).GetBoxed(entity));
+                }
             }
 
             return result;
@@ -49,8 +49,7 @@ namespace Yogurt
         internal static unsafe void DebugNoComponent<T>(this Entity entity) where T : IComponent
         {
 #if YOGURT_DEBUG
-            bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID<T>.Value);
-            if (!entityHasComponent)
+            if (!HasComponent<T>(entity))
             {
                 UnityEngine.Debug.LogError($"{entity} does not have [{typeof(T).Name}]");
             }
@@ -60,13 +59,21 @@ namespace Yogurt
         internal static unsafe void DebugAlreadyHave<T>(this Entity entity) where T : IComponent
         {
 #if YOGURT_DEBUG
-            bool entityHasComponent = entity.Meta->ComponentsMask.Has(ComponentID<T>.Value);
-            if (entityHasComponent)
+            if (HasComponent<T>(entity))
             {
                 UnityEngine.Debug.LogError($"{entity} already have [{typeof(T).Name}]");
             }
 #endif
         }
+
+#if YOGURT_DEBUG
+        // ID first: registering a new type can move metadata.
+        private static unsafe bool HasComponent<T>(Entity entity) where T : IComponent
+        {
+            ushort componentId = ComponentID<T>.Value;
+            return Mask.Has(EntityMeta.Components(entity.Meta), componentId);
+        }
+#endif
         
         internal static void DebugParentToSelf(this Entity entity, Entity parent)
         {

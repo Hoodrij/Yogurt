@@ -1,5 +1,6 @@
 ﻿namespace Yogurt
 {
+    // Component IDs are resolved before the meta pointer is taken: registering a new type can move the metadata.
     public unsafe partial struct Entity
     {
         public Entity Add<T>(T component) where T : IComponent
@@ -14,18 +15,20 @@
         {
             this.DebugCheckAlive();
 
+            Storage<T> storage = Storage<T>.Instance;
             EntityMeta* meta = Meta;
             if (!IsAlive(meta))
                 return this;
 
-            Storage<T> storage = Storage<T>.Instance;
             storage.Set(component, this);
 
             ComponentID componentID = storage.ID;
-            if (!meta->ComponentsMask.Has(componentID))
+            ulong* components = EntityMeta.Components(meta);
+            if (!Mask.Has(components, componentID))
             {
-                meta->ComponentsMask.Set(componentID);
-                WorldFacade.EnqueueComponentChange(this, componentID);
+                Mask.Set(components, componentID);
+                meta->ComponentCount++;
+                WorldFacade.EnqueueComponentChange(this, meta, componentID);
             }
 
             return this;
@@ -55,30 +58,37 @@
         {
             this.DebugCheckAlive();
 
+            ComponentID componentID = ComponentID<T>.Value;
             EntityMeta* meta = Meta;
             if (!IsAlive(meta))
                 return false;
 
-            return meta->ComponentsMask.Has(ComponentID<T>.Value);
+            return Mask.Has(EntityMeta.Components(meta), componentID);
         }
 
         public void Remove<T>() where T : IComponent
         {
             this.DebugNoComponent<T>();
 
+            Storage<T> storage = Storage<T>.Instance;
             EntityMeta* meta = Meta;
             if (!IsAlive(meta))
                 return;
 
-            Storage<T> storage = Storage<T>.Instance;
             ComponentID componentID = storage.ID;
-            meta->ComponentsMask.UnSet(componentID);
-            storage.ClearEntity(this);
+            ulong* components = EntityMeta.Components(meta);
+            bool had = Mask.Has(components, componentID);
+            if (had)
+            {
+                Mask.UnSet(components, componentID);
+                meta->ComponentCount--;
+                storage.ClearEntity(this);
+            }
 
-            if (meta->ComponentsMask.IsEmpty)
+            if (meta->ComponentCount == 0)
                 Kill();
-            else
-                WorldFacade.EnqueueComponentChange(this, componentID);
+            else if (had)
+                WorldFacade.EnqueueComponentChange(this, meta, componentID);
         }
 
         public void Kill()
@@ -94,10 +104,13 @@
             WorldFacade.EnqueueKill(this);
             WorldFacade.KillLife(this);
 
+            // Life callbacks can create entities or register types, which moves metadata.
+            meta = Meta;
             meta->IsAlive = false;
             while (meta->Childs.Count > 0)
             {
                 meta->Childs.Get(meta->Childs.Count - 1)->Kill();
+                meta = Meta;
             }
 
             UnParent(meta);

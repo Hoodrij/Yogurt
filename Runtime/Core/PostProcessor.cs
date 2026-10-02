@@ -2,7 +2,7 @@
 
 namespace Yogurt
 {
-    internal sealed class PostProcessor
+    internal sealed unsafe class PostProcessor
     {
         private enum OperationKind : byte
         {
@@ -24,14 +24,17 @@ namespace Yogurt
 
         private readonly Queue<EntityOperation> operations = new();
 
-        public unsafe void EnqueueComponentChange(Entity entity, ComponentID componentId)
-        {
-            EntityMeta* meta = entity.Meta;
-            // A nonempty mask means that this entity already has a queued change.
-            if (meta->PendingComponentsMask.IsEmpty)
-                operations.Enqueue(new EntityOperation(entity, OperationKind.ComponentsChanged));
+        private long visit;
 
-            meta->PendingComponentsMask.Set(componentId);
+        public void EnqueueComponentChange(Entity entity, EntityMeta* meta, ComponentID componentId)
+        {
+            if (!meta->HasPendingChanges)
+            {
+                meta->HasPendingChanges = true;
+                operations.Enqueue(new EntityOperation(entity, OperationKind.ComponentsChanged));
+            }
+
+            Mask.Set(EntityMeta.PendingComponents(meta), componentId);
         }
 
         public void EnqueueKill(Entity entity)
@@ -39,18 +42,18 @@ namespace Yogurt
             operations.Enqueue(new EntityOperation(entity, OperationKind.Kill));
         }
 
-        public unsafe void Clear()
+        public void Clear()
         {
             while (operations.Count > 0)
             {
                 Entity entity = operations.Dequeue().Entity;
                 EntityMeta* meta = entity.Meta;
                 if (meta->Age == entity.Age)
-                    meta->PendingComponentsMask.Clear();
+                    EntityMeta.ClearPending(meta);
             }
         }
 
-        public unsafe void Update()
+        public void Update()
         {
             if (operations.Count == 0)
                 return;
@@ -71,36 +74,57 @@ namespace Yogurt
 
                 if (!meta->IsAlive)
                 {
-                    meta->PendingComponentsMask.Clear();
+                    EntityMeta.ClearPending(meta);
                     continue;
                 }
 
-                Mask changes = meta->PendingComponentsMask;
-                meta->PendingComponentsMask.Clear();
-                ProcessComponentsChanged(entity, meta, changes);
+                ProcessComponentsChanged(entity, meta, ++visit);
             }
         }
 
-        private static unsafe void ProcessComponentsChanged(Entity entity, EntityMeta* meta, Mask changes)
+        private static void ProcessComponentsChanged(Entity entity, EntityMeta* meta, long visit)
         {
-            while (changes.TryPopFirst(out ComponentID componentId))
+            meta->HasPendingChanges = false;
+            ulong* pending = EntityMeta.PendingComponents(meta);
+            int words = Mask.Words;
+            for (int i = 0; i < words; i++)
             {
-                Storage storage = Storage.Of(componentId);
-                Group[] groups = storage.Groups;
-                int count = storage.GroupsCount;
-                for (int i = 0; i < count; i++)
+                ulong word = pending[i];
+                if (word == 0)
+                    continue;
+
+                pending[i] = 0;
+                do
                 {
-                    groups[i].ProcessChange(entity, meta, changes);
-                }
+                    Storage storage = Storage.Of((ushort)((i << 6) + Mask.TrailingZeroCount(word)));
+                    word &= word - 1;
+
+                    Group[] groups = storage.Groups;
+                    int count = storage.GroupsCount;
+                    for (int g = 0; g < count; g++)
+                    {
+                        groups[g].ProcessChange(entity, meta, visit);
+                    }
+                } while (word != 0);
             }
         }
 
-        private static unsafe void ProcessKill(Entity entity, EntityMeta* meta)
+        private static void ProcessKill(Entity entity, EntityMeta* meta)
         {
-            Mask components = meta->ComponentsMask;
-            while (components.TryPopFirst(out ComponentID componentId))
+            ulong* components = EntityMeta.Components(meta);
+            int words = Mask.Words;
+            for (int i = 0; i < words; i++)
             {
-                Storage.Of(componentId).ClearEntity(entity);
+                ulong word = components[i];
+                if (word == 0)
+                    continue;
+
+                components[i] = 0;
+                do
+                {
+                    Storage.Of((ushort)((i << 6) + Mask.TrailingZeroCount(word))).ClearEntity(entity);
+                    word &= word - 1;
+                } while (word != 0);
             }
 
             for (int i = 0; i < meta->Groups.Count; i++)
@@ -108,7 +132,7 @@ namespace Yogurt
                 Groups.Get(*meta->Groups[i]).TryRemove(entity);
             }
 
-            meta->Clear();
+            EntityMeta.Release(meta);
             WorldFacade.RemoveEntity(entity);
         }
     }

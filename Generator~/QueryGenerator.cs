@@ -7,18 +7,6 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Yogurt.Generator
 {
-    /// <summary>
-    /// Finds all statically resolvable query chains:
-    ///     Query.Of&lt;T&gt;() / Query.Single&lt;T&gt;() [.With&lt;T&gt;()* / .Without&lt;T&gt;()*]
-    /// and emits a per-assembly warmup registration so all Groups are created
-    /// at world startup (empty world) instead of lazily mid-runtime.
-    ///
-    /// Limitations (by design, best-effort):
-    /// - Only literal fluent chains rooted at Query.Of / Query.Single are detected.
-    ///   Chains built through variables/conditionals are skipped.
-    /// - Chains containing open generic type arguments are skipped entirely
-    ///   (warming a prefix would create a Group nobody queries).
-    /// </summary>
     [Generator]
     public class QueryGenerator : IIncrementalGenerator
     {
@@ -57,7 +45,7 @@ namespace Yogurt.Generator
                 RuntimeInitialization.AppendAttribute(sb);
                 sb.AppendLine("        internal static void Register()");
                 sb.AppendLine("        {");
-                sb.AppendLine("            // Guard for disabled domain reload: statics survive, list must not grow.");
+                // Statics survive when domain reload is disabled: register once, or the warmup list grows every play session.
                 sb.AppendLine("            if (registered)");
                 sb.AppendLine("                return;");
                 sb.AppendLine("            registered = true;");
@@ -108,7 +96,6 @@ namespace Yogurt.Generator
             StringBuilder chain = new StringBuilder();
             chain.Append("global::Yogurt.Query.Of<").Append(Display(rootType)).Append(">()");
 
-            // Walk outward through the fluent chain: .With<T>() / .Without<T>()
             SyntaxNode current = rootInvocation;
             while (current.Parent is MemberAccessExpressionSyntax member
                    && member.Parent is InvocationExpressionSyntax outer
@@ -120,11 +107,11 @@ namespace Yogurt.Generator
 
                 string containing = chainMethod.ContainingType?.OriginalDefinition.ToDisplayString() ?? string.Empty;
                 if (containing != "Yogurt.QueryOfEntity" && containing != "Yogurt.QueryOfAspect<TAspect>")
-                    break; // some unrelated With/Without — the chain so far is the real composition
+                    break; // an unrelated With/Without ends the chain
 
                 ITypeSymbol argType = chainMethod.TypeArguments[0];
                 if (!IsEmittable(argType))
-                    return null; // open generic inside the chain — skip whole chain, a prefix Group would be dead weight
+                    return null; // open generic: skip the whole chain, a warmed prefix group would never be queried
 
                 chain.Append('.').Append(member.Name.Identifier.Text)
                      .Append('<').Append(Display(argType)).Append(">()");
@@ -135,8 +122,6 @@ namespace Yogurt.Generator
             return chain.ToString();
         }
 
-        /// Type must be closed (no type parameters) and visible to generated code
-        /// at namespace scope within the same assembly (public/internal all the way up).
         private static bool IsEmittable(ITypeSymbol type)
         {
             if (type is IErrorTypeSymbol or ITypeParameterSymbol)

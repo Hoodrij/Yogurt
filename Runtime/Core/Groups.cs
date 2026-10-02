@@ -29,12 +29,6 @@ namespace Yogurt
             return group;
         }
 
-        internal static bool TryGet(Composition composition, out Group group)
-            => compositions.TryGetValue(composition, out group);
-
-        // Evict only the query lookup. Membership IDs remain valid until world disposal.
-        internal static bool Remove(Composition composition) => compositions.Remove(composition);
-
         internal static void Clear()
         {
             foreach (Group group in groups)
