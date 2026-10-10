@@ -82,7 +82,7 @@ Each term has one meaning in this file and in the code.
 | `Unity/` | The `Yogurt.Unity` assembly: waits, frame loops, GameObject links, assets and pools, blueprints. It references `Yogurt` and UniTask. |
 | `Unity/Editor/` | The `Yogurt.Unity.Editor` assembly: inspector drawers for `Asset<T>` and `PooledAsset<T>`. |
 | `Skills~/` | Agent skills for game developers who use Yogurt. One folder for each skill, with `SKILL.md` and optional `references/`. |
-| `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/` | Plugin and marketplace manifests for Claude Code and Codex. They point to `Skills~/`. Keep their `version` equal to `package.json`. |
+| `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/` | Plugin and marketplace manifests for Claude Code and Codex. They point to `Skills~/`. The Claude Code plugin has no `version`: Claude Code then uses the commit SHA, so each commit is an update. Keep the Codex `version` equal to `package.json`. |
 | `Generator~/` | Roslyn source generators. Unity ignores folders that end with `~`. |
 | `Generator.dll` | The compiled generators. Unity runs this file. |
 
