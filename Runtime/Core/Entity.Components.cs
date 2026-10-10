@@ -42,7 +42,8 @@
             return ref Storage<T>.Instance.Get(this);
         }
 
-        public bool TryGet<T>(out T t) where T : IComponent
+        // Class components only: for a struct, the out value is a copy and changes to it are lost.
+        public bool TryGet<T>(out T t) where T : class, IComponent
         {
             bool has = Has<T>();
             t = default;

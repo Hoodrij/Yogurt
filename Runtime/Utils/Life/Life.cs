@@ -8,10 +8,10 @@ namespace Yogurt
 {
     [DebuggerDisplay("{Name}")]
     [AsyncMethodBuilder(typeof(AsyncLifeMethodBuilder))]
-#if CSHARP_10
-    public readonly record struct Life() : IDisposable
-#else
+#if CSHARP_9
     public class Life : IDisposable
+#else
+    public readonly record struct Life() : IDisposable
 #endif
     {
         internal readonly int Id = LifePool.Pop();

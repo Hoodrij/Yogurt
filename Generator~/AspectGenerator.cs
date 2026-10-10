@@ -47,7 +47,7 @@ namespace Yogurt.Generator
                     string access = GetAccessibilityString(t!);
                     sb.AppendLine($"""
                                           {access} static ref TComponent Get<TComponent>(this {fullname} aspect) where TComponent : IComponent => ref aspect.Entity.Get<TComponent>();
-                                          {access} static bool TryGet<TComponent>(this {fullname} aspect, out TComponent component) where TComponent : IComponent => aspect.Entity.TryGet(out component);
+                                          {access} static bool TryGet<TComponent>(this {fullname} aspect, out TComponent component) where TComponent : class, IComponent => aspect.Entity.TryGet(out component);
                                           {access} static void Add<TComponent>(this {fullname} aspect, TComponent component) where TComponent : IComponent => aspect.Entity.Set(component);
                                           {access} static void Set<TComponent>(this {fullname} aspect, TComponent component) where TComponent : IComponent => aspect.Entity.Set(component);
                                           {access} static bool Has<TComponent>(this {fullname} aspect) where TComponent : IComponent => aspect.Entity.Has<TComponent>();

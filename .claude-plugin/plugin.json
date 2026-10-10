@@ -1,0 +1,20 @@
+﻿{
+  "name": "yogurt",
+  "version": "1.1.0",
+  "description": "Skills to build Unity games with Yogurt: model objects with entities, components and aspects, write jobs as complete units of work, and connect passive views and UI.",
+  "author": {
+    "name": "Hoodrij",
+    "url": "https://github.com/Hoodrij"
+  },
+  "homepage": "https://github.com/Hoodrij/Yogurt",
+  "repository": "https://github.com/Hoodrij/Yogurt",
+  "license": "MIT",
+  "keywords": [
+    "yogurt",
+    "unity",
+    "ecs",
+    "entity-component",
+    "gamedev"
+  ],
+  "skills": "./Skills~/"
+}

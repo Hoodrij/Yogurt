@@ -23,10 +23,10 @@ namespace Yogurt
 
         public static bool IsAlive([CanBeNull] Life life)
         {
-#if CSHARP_10
-            return activeLifes.Contains(life.Id);
-#else
+#if CSHARP_9
             return life is not null && activeLifes.Contains(life.Id);
+#else
+            return activeLifes.Contains(life.Id);
 #endif
         }
 

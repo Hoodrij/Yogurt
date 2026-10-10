@@ -1,0 +1,17 @@
+﻿{
+    "name": "Yogurt.Unity",
+    "rootNamespace": "Yogurt.Unity",
+    "references": [
+        "GUID:18d81e0c744e10e4986c667ac0f48e4c",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

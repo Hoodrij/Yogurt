@@ -1,0 +1,15 @@
+﻿{
+  "name": "yogurt",
+  "description": "Yogurt entity-component framework for Unity, packaged as agent skills.",
+  "owner": {
+    "name": "Hoodrij",
+    "url": "https://github.com/Hoodrij"
+  },
+  "plugins": [
+    {
+      "name": "yogurt",
+      "source": "./",
+      "description": "Skills to build Unity games with Yogurt."
+    }
+  ]
+}
