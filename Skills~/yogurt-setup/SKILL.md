@@ -70,7 +70,7 @@ public class Boot : MonoBehaviour
 
 `Assets/Scripts/Entities/Game/RunGameJob.cs`: a first job that creates the game entity. See `references/meta-flow.md` in `yogurt-jobs`.
 
-Folders: `Assets/Resources/Configs`, `Assets/Resources/Prefabs`, `Assets/Scripts/Entities`. No assembly definitions.
+Folders: `Assets/Resources/Configs`, `Assets/Resources/Prefabs`, `Assets/Scripts/Entities`.
 
 ## Editor
 

@@ -18,13 +18,13 @@ Views, assets, boot, waits: `yogurt-unity`.
 
 ## Rules
 
-1. Pass aspects, entities or plain values. Never a component as a parameter.
+1. Aspects over entities. Parameters, return values, locals and component fields that point to an object use its aspect. A plain `Entity` only where any object fits. Never a component as a parameter.
 2. Queries run only in jobs, never in aspects, components or views.
 3. Change struct components through a reference (`ref` aspect property or `ref entity.Get<T>()`), never through a copy.
 4. `Query.Single` only for a component that exists on exactly one entity.
 5. Remove an object by killing it or its owner. Never `Destroy` a linked GameObject.
 6. No `async void`, no `Task`, no `while (true)`. `.Forget()` only where a Life stops the work.
-7. Work is a job. No managers, services, controllers, handlers, resolvers, helpers, static utility classes, event buses, DI.
+7. Work is a job. No managers, services, controllers, handlers, resolvers, helpers, static utility classes, event buses, DI. Extensions are fine: they add behavior to an existing type (`yogurt-entity`).
 8. Default flow is jobs awaiting jobs. A per-frame update job over a query is fine when many objects must update in order (real-time movement).
 
 ## API
