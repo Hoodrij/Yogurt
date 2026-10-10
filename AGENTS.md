@@ -41,6 +41,7 @@ Rules:
 3. Keep new types `internal`. Make a type `public` only when generated code or users must use it.
 4. When a public API changes, update `README.md` in the same change.
 5. Code in `Runtime/` must not use `Yogurt.Unity`. Put code that uses GameObjects, MonoBehaviours, assets or Unity time into `Unity/`.
+6. When a public API changes, update the skills in `Skills~/` in the same change. The skills show code that must compile against the current API.
 
 ## 3. Glossary
 
@@ -80,6 +81,8 @@ Each term has one meaning in this file and in the code.
 | `Runtime/Utils/Unsafe/UnsafeSpan.cs` | Unmanaged growable list for per-entity group and child lists. |
 | `Unity/` | The `Yogurt.Unity` assembly: waits, frame loops, GameObject links, assets and pools, blueprints. It references `Yogurt` and UniTask. |
 | `Unity/Editor/` | The `Yogurt.Unity.Editor` assembly: inspector drawers for `Asset<T>` and `PooledAsset<T>`. |
+| `Skills~/` | Agent skills for game developers who use Yogurt. One folder for each skill, with `SKILL.md` and optional `references/`. |
+| `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/` | Plugin and marketplace manifests for Claude Code and Codex. They point to `Skills~/`. Keep their `version` equal to `package.json`. |
 | `Generator~/` | Roslyn source generators. Unity ignores folders that end with `~`. |
 | `Generator.dll` | The compiled generators. Unity runs this file. |
 

@@ -11,7 +11,23 @@ https://github.com/Hoodrij/Yogurt.git
 
 Yogurt requires C# 11 for best performance.
 
+The `yogurt-setup` skill in `Skills~` will setup every dependency you need.
+
 If a project cannot use C# 11, add `CSHARP_9` to the Scripting Define Symbols.
+
+# AI Setup
+
+This repository is also a plugin for Claude Code and Codex. The plugin gives skills that tell an agent how to build a game with Yogurt.
+
+Claude Code:
+```
+/plugin marketplace add Hoodrij/Yogurt
+/plugin install yogurt@yogurt
+```
+
+Codex: add this repository as a plugin marketplace, then install the `yogurt` plugin.
+
+The skills are in `Skills~`. Unity does not import this folder.
 
 # Examples
 
