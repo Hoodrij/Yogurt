@@ -19,14 +19,14 @@ Use this order when two goals conflict. A goal with a lower number always wins.
 
 Two more rules apply to all goals:
 
-- Components can be classes or structs. Both must work and both must be fast. Do not add a feature that works for only one kind.
+- Components can be classes or structs. Both must work and both must be fast. Do not add a feature that works for only one kind. The one exception is `TryGet`: it has a `class` constraint, because an out value of a struct is a copy and a change to it is lost.
 - Roslyn source generation is allowed. Use it when it moves work from run time to compile time, for example registrations, masks and warmups.
 
 ## 2. Public API
 
 The public API is the contract with users. `README.md` shows it to users.
 
-- Entity: `Entity.Create`, `Add`, `Set`, `Get` (returns `ref`), `TryGet`, `Has`, `Remove`, `Kill`, `Exist`, `SetParent`, `UnParent`, `Life`, `As<TAspect>`, `Entity.Null`.
+- Entity: `Entity.Create`, `Add`, `Set`, `Get` (returns `ref`), `TryGet` (class components only), `Has`, `Remove`, `Kill`, `Exist`, `SetParent`, `UnParent`, `Life`, `As<TAspect>`, `Entity.Null`.
 - Component: any class or struct that implements `IComponent`.
 - Aspect: a struct that implements `IAspect`. Generated extension methods give it `Get`, `TryGet`, `Add`, `Set`, `Has`, `Remove` and `As`.
 - Query: `Query.Of<T>`, `With<T>`, `Without<T>`, `Single`, `Warmup`, `foreach`, `Query.Single<T>`. The `QueryEx` extensions give `Any`, `Count`, `First`, `None` and `AsEnumerable`.

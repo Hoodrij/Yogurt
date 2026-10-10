@@ -9,6 +9,10 @@ UPM
 https://github.com/Hoodrij/Yogurt.git
 ```
 
+Yogurt requires C# 11 for best performance.
+
+If a project cannot use C# 11, add `CSHARP_9` to the Scripting Define Symbols.
+
 # Examples
 
 - ⚔️ **Roguelike** sample project                                                      
@@ -57,8 +61,10 @@ entity.Has<Health>();
 entity.Remove<Health>();
 
 ref entity.Get<Health>();
-entity.TryGet(out Health health);
+entity.TryGet(out Health health); // Class components only.
 ```
+
+`TryGet` works only for class components. For a struct component, the out value would be a copy, and a change to it would be lost. For a struct, use `Has` and `ref Get`.
 
 ### 🏷️ Aspect
 
