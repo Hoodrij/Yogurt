@@ -32,6 +32,7 @@ The public API is the contract with users. `README.md` shows it to users.
 - Query: `Query.Of<T>`, `With<T>`, `Without<T>`, `Single`, `Warmup`, `foreach`, `Query.Single<T>`. The `QueryEx` extensions give `Any`, `Count`, `First`, `None` and `AsEnumerable`.
 - Life: `Life`, `Kill`, `IsAlive`, `AsToken`, `AsUniTask`, `Or`, `And`, `SetParent`.
 - Debug: `Debug.Entities`. The `YOGURT_DEBUG` define enables error logs for invalid use.
+- Unity integration (`Yogurt.Unity`): `Wait.While`, `Wait.Until`, `Wait.Seconds`, `Wait.Update`, `entity.Run`, `entity.Link`, `EntityLink`, `component.GetEntity`, `Asset<T>`, `PooledAsset<T>`, `Despawn`, `IBlueprint`, `EntityBlueprint`, `entity.PopulateFrom`.
 
 Rules:
 
@@ -39,6 +40,7 @@ Rules:
 2. Do not remove, rename or change a public member without approval from the user.
 3. Keep new types `internal`. Make a type `public` only when generated code or users must use it.
 4. When a public API changes, update `README.md` in the same change.
+5. Code in `Runtime/` must not use `Yogurt.Unity`. Put code that uses GameObjects, MonoBehaviours, assets or Unity time into `Unity/`.
 
 ## 3. Glossary
 
@@ -76,6 +78,8 @@ Each term has one meaning in this file and in the code.
 | `Runtime/Generation/*.cs` | Runtime API that generated code calls. |
 | `Runtime/Utils/Life/*.cs` | `Life`, a pooled lifetime token on top of UniTask. |
 | `Runtime/Utils/Unsafe/UnsafeSpan.cs` | Unmanaged growable list for per-entity group and child lists. |
+| `Unity/` | The `Yogurt.Unity` assembly: waits, frame loops, GameObject links, assets and pools, blueprints. It references `Yogurt` and UniTask. |
+| `Unity/Editor/` | The `Yogurt.Unity.Editor` assembly: inspector drawers for `Asset<T>` and `PooledAsset<T>`. |
 | `Generator~/` | Roslyn source generators. Unity ignores folders that end with `~`. |
 | `Generator.dll` | The compiled generators. Unity runs this file. |
 
@@ -166,7 +170,7 @@ Do these steps for each change to Yogurt:
 ## 9. Code style
 
 1. Match the code around your change: naming, braces, file layout.
-2. Use the namespace `Yogurt`. Put one main type in each file.
+2. Use the namespace `Yogurt` in `Runtime/` and `Yogurt.Unity` in `Unity/`. Put one main type in each file.
 3. Use braces for `for` and `foreach` bodies in `Runtime`. ReSharper reports a missing brace as an error.
 4. Use `readonly struct` when a struct does not change after creation.
 

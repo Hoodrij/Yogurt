@@ -141,6 +141,76 @@ entity.SetParent(parentEntity);
 entity.UnParent();
 ```
 
+# Unity integration
+
+The `Yogurt.Unity` assembly connects entities to Unity objects. It is in the `Unity` folder and in the `Yogurt.Unity` namespace. The core `Yogurt` assembly does not use it.
+
+### 🏷️ Wait
+
+`Wait` gives conditions that you can await. A wait stops when its Life dies. A stopped wait throws `OperationCanceledException`.
+
+```csharp
+await Wait.Until(IsPlayerOnExit, level.Life());
+await Wait.While(IsStunned, zombie.Life());
+await Wait.Seconds(0.5f, zombie.Life());
+await Wait.Update();
+```
+
+A wait without a Life stops when the application quits.
+
+### 🏷️ Run
+
+`Run` calls an action one time in each frame. It stops when the entity dies.
+
+```csharp
+projectile.Run(() => projectile.View.transform.position = projectile.Motion.Position);
+```
+
+### 🏷️ Link
+
+`Link` connects a GameObject to an entity. When the entity dies, Yogurt despawns the GameObject.
+
+```csharp
+Entity zombie = Entity.Create().Link(view.gameObject).Add(view);
+Entity clicked = hit.collider.GetEntity();
+```
+
+To remove a linked GameObject, kill its entity. Do not destroy a linked GameObject.
+
+### 🏷️ Asset
+
+`Asset<T>` is a prefab reference. `PooledAsset<T>` also keeps despawned instances and spawns them again.
+
+```csharp
+public class LevelConfig : ScriptableObject, IComponent
+{
+    public PooledAsset<AgentView> Zombie;
+}
+
+AgentView view = await config.Zombie.Spawn(level.View.Board);
+view.Despawn();
+```
+
+`Despawn` puts a pooled instance back into its pool. It destroys an instance that has no pool.
+
+### 🏷️ Blueprint
+
+An `IBlueprint` adds components to an entity. `EntityBlueprint` is a component that keeps a blueprint on an entity.
+
+```csharp
+public class EnemyConfig : ScriptableObject, IBlueprint
+{
+    public int Health = 2;
+
+    public void Populate(Entity entity)
+    {
+        entity.Add(new Zombie()).Add(new Health { Value = Health });
+    }
+}
+
+Entity zombie = Entity.Create().PopulateFrom(enemyConfig);
+```
+
 ### 🏷️ Debug
 
 You can access all the Entities list with full meta like this
