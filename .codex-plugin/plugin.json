@@ -1,6 +1,5 @@
 ﻿{
   "name": "yogurt",
-  "version": "1.1.0",
   "description": "Skills to build Unity games with Yogurt: model objects with entities, components and aspects, write jobs as complete units of work, and connect passive views and UI.",
   "author": {
     "name": "Hoodrij",
