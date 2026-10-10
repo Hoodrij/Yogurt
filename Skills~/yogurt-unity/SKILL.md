@@ -97,4 +97,4 @@ Assets/
         └── Components/         its aspect, components, view, config
 ```
 
-One type per file, no assembly definitions. One namespace for the game, not under `Yogurt`: inside `Yogurt.X`, a `Unity.*` name such as `Unity.Mathematics` resolves to `Yogurt.Unity`.
+One type per file. One namespace for the game, not under `Yogurt`: inside `Yogurt.X`, a `Unity.*` name such as `Unity.Mathematics` resolves to `Yogurt.Unity`.
