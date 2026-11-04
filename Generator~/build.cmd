@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 
-dotnet build -c Release
+dotnet build -c Release -o bin\Release\netstandard2.0
 if errorlevel 1 exit /b %errorlevel%
 
 copy /Y "bin\Release\netstandard2.0\Generator.dll" "..\Generator.dll"

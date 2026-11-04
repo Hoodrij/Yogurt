@@ -85,6 +85,9 @@ Each term has one meaning in this file and in the code.
 | `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/` | Plugin and marketplace manifests for Claude Code and Codex. They point to `Skills~/`. The plugins have no `version`: Claude Code then uses the commit SHA, so each commit is an update. |
 | `Generator~/` | Roslyn source generators. Unity ignores folders that end with `~`. |
 | `Generator.dll` | The compiled generators. Unity runs this file. |
+| `Yogurt.csproj` | Runtime for .NET outside Unity (Godot, console tools): netstandard2.1, C# 9, UniTask from NuGet. Unity ignores it and builds `Runtime/Yogurt.asmdef`. |
+| `Yogurt.Generator.props` | Import it into a .NET project that uses Yogurt: runs the generators from `Generator~` on it. Outside Unity the generated registrations run as `[ModuleInitializer]`. |
+| `Runtime/Utils/Pools.cs` | Small object and list pools for `Life`. Runtime uses no `UnityEngine` type. |
 
 ### 4.2 Data flow
 
