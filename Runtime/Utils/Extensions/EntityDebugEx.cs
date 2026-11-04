@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
 namespace Yogurt
 {
@@ -28,7 +29,7 @@ namespace Yogurt
 #if YOGURT_DEBUG
             if (entity == Entity.Null)
             {
-                UnityEngine.Debug.LogError($"Entity is Null");
+                Console.Error.WriteLine($"Entity is Null");
                 return true;
             }
 #endif
@@ -41,7 +42,7 @@ namespace Yogurt
             if (DebugCheckNull(entity)) return;
             if (!entity.Exist)
             {
-                UnityEngine.Debug.LogError($"{entity} does not Exist");
+                Console.Error.WriteLine($"{entity} does not Exist");
             }
 #endif
         }
@@ -51,7 +52,7 @@ namespace Yogurt
 #if YOGURT_DEBUG
             if (!HasComponent<T>(entity))
             {
-                UnityEngine.Debug.LogError($"{entity} does not have [{typeof(T).Name}]");
+                Console.Error.WriteLine($"{entity} does not have [{typeof(T).Name}]");
             }
 #endif
         }
@@ -61,7 +62,7 @@ namespace Yogurt
 #if YOGURT_DEBUG
             if (HasComponent<T>(entity))
             {
-                UnityEngine.Debug.LogError($"{entity} already have [{typeof(T).Name}]");
+                Console.Error.WriteLine($"{entity} already have [{typeof(T).Name}]");
             }
 #endif
         }
@@ -80,7 +81,7 @@ namespace Yogurt
 #if YOGURT_DEBUG
             if (entity == parent)
             {
-                UnityEngine.Debug.LogError($"{entity} trying parent self");
+                Console.Error.WriteLine($"{entity} trying parent self");
             }
 #endif
         }

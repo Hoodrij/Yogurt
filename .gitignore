@@ -66,3 +66,4 @@ crashlytics-build.properties
 [Bb]in.meta
 [Oo]bj/
 [Oo]bj.meta
+!/Yogurt.csproj

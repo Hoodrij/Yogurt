@@ -1,0 +1,6 @@
+<!-- Import into every .NET project that uses Yogurt: runs the Yogurt source generator on it. Unity uses Generator.dll. -->
+<Project>
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)Generator~/AspectSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+</Project>
