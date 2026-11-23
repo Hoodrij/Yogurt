@@ -9,10 +9,11 @@ namespace Yogurt.Unity
     public class Asset<T> where T : Component
     {
         public T Prefab;
-
+        
         public async UniTask<T> Spawn(Transform parent = null)
         {
-            T[] instances = await Object.InstantiateAsync(Prefab, parent);
+            // worldSpace = false: the instance keeps its local transform under the parent, as Instantiate(prefab, parent) does.
+            T[] instances = await Object.InstantiateAsync(Prefab, new InstantiateParameters { parent = parent, worldSpace = false });
             return instances[0];
         }
     }
